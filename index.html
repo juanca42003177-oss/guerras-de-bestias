@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>⚔️ Guerras de Bestias</title>
+<title>⚔️ Guerras de Bestias — Dragon Trade Labs</title>
+<link rel="icon" href="logos/app-logo.png">
 <style>
 :root{--bg:#0b0e13;--card:#141a23;--border:#232b36;--gold:#f0b90b;--muted:#8b96a5}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -110,8 +111,9 @@ svg.char{width:46px;height:46px;overflow:visible}
 <div id="menu">
   <div class="hdr">⚔️ Guerras de Bestias</div>
   <div class="box" style="text-align:center">
-    <div style="font-size:44px;animation:floaty 3s ease-in-out infinite">🐉</div>
-    <div style="font-weight:900;font-size:19px;margin-top:4px;background:linear-gradient(90deg,#ffd44d,#ff9d3c);-webkit-background-clip:text;background-clip:text;color:transparent">GUERRAS DE BESTIAS</div>
+    <img src="logos/app-logo.png" alt="Dragon Trade Labs" style="width:86px;height:86px;border-radius:50%;border:3px solid #f0b90b;box-shadow:0 0 22px rgba(240,185,11,.45);animation:floaty 3s ease-in-out infinite">
+    <div class="small" style="letter-spacing:2px;margin-top:8px;color:#f0b90b;font-weight:800">DRAGON TRADE LABS PRESENTA</div>
+    <div style="font-weight:900;font-size:21px;margin-top:2px;background:linear-gradient(90deg,#ffd44d,#ff9d3c);-webkit-background-clip:text;background-clip:text;color:transparent">GUERRAS DE BESTIAS</div>
     <div class="small" style="margin:8px 0">Juego de cartas ninja original de <b>Dragon Trade Labs</b>. Convoca Bestias con Colas 💎, Maestros Kage 🏅 y Ninjas ⚪. Sus poderes se ven en el tablero: ataques que cruzan carriles, perímetros que castigan al que se acerca. Práctica gratis contra la IA del dragón.</div>
     <button class="btn" onclick="nuevaPartida()">⚔️ Jugar práctica (vs IA)</button>
     <button class="btn sec" onclick="verCartas()">🃏 Ver las 24 cartas</button>
@@ -122,7 +124,7 @@ svg.char{width:46px;height:46px;overflow:visible}
 <div id="game" style="display:none;padding-bottom:118px">
   <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 10px 2px;font-size:11px">
     <span style="cursor:pointer;font-size:16px" onclick="if(confirm('¿Rendirse?'))nuevaPartida()">✕</span>
-    <span style="font-weight:900;color:var(--gold)">⚔️ Guerras de Bestias · <span id="turnoN" style="font-weight:600;color:var(--muted)">—</span></span>
+    <span style="font-weight:900;color:var(--gold)"><img src="logos/app-logo.png" style="width:18px;height:18px;border-radius:50%;vertical-align:-4px;border:1px solid #f0b90b"> Guerras de Bestias · <span id="turnoN" style="font-weight:600;color:var(--muted)">—</span></span>
     <span class="small" id="tuMano"></span>
   </div>
   <div class="box pbar">
@@ -677,6 +679,7 @@ function init3D(){
   R3.cam=new THREE.PerspectiveCamera(46,W/H,.1,120);
   R3.cam.position.set(0,10.5,20); R3.cam.lookAt(0,1.2,0);
   R3.scene.add(new THREE.AmbientLight(0x8890a8,.75));
+  var dios=new THREE.PointLight(0xf0b90b,.55,30); dios.position.set(0,9,4); R3.scene.add(dios);
   var sol=new THREE.DirectionalLight(0xfff2cc,.95); sol.position.set(-6,14,8);
   sol.castShadow=true; sol.shadow.mapSize.set(1024,1024); R3.scene.add(sol);
   var contraluz=new THREE.DirectionalLight(0x4466ff,.35); contraluz.position.set(8,6,-9); R3.scene.add(contraluz);
@@ -686,7 +689,7 @@ function init3D(){
   for(var i=0;i<4;i++){
     var p=new THREE.Mesh(new THREE.BoxGeometry(4.4,.5,8.4),new THREE.MeshStandardMaterial({color:terrCol[i],roughness:.75}));
     p.position.set(LANEX[i],.25,0); p.receiveShadow=true; p.castShadow=true; R3.scene.add(p);
-    var filo=new THREE.Mesh(new THREE.BoxGeometry(4.5,.08,8.5),new THREE.MeshBasicMaterial({color:0x3a4266}));
+    var filo=new THREE.Mesh(new THREE.BoxGeometry(4.5,.08,8.5),new THREE.MeshBasicMaterial({color:0xf0b90b}));
     filo.position.set(LANEX[i],.52,0); R3.scene.add(filo);
   }
   cancelAnimationFrame(R3.raf); t3d=0; loop3D();
