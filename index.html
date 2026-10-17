@@ -5,47 +5,83 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>⚔️ Guerras de Bestias</title>
 <style>
-:root{--bg:#0e1116;--card:#161c24;--border:#232b36;--gold:#f0b90b;--muted:#8b96a5}
+:root{--bg:#0b0e13;--card:#141a23;--border:#232b36;--gold:#f0b90b;--muted:#8b96a5}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-body{background:var(--bg);color:#eaecef;font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:14px}
-.hdr{text-align:center;padding:10px;font-weight:900;color:var(--gold);font-size:18px}
-.box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:10px}
+body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 60%);color:#eaecef;font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:12px;overflow-x:hidden}
+.hdr{text-align:center;padding:10px;font-weight:900;color:var(--gold);font-size:17px;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:9px;box-shadow:0 4px 18px rgba(0,0,0,.45)}
 .small{color:var(--muted);font-size:12px;line-height:1.5}
-.btn{display:block;width:100%;padding:14px;border-radius:12px;border:0;background:var(--gold);color:#111;font-weight:900;margin-top:10px;cursor:pointer}
-.btn.sec{background:var(--card);color:#eaecef;border:1px solid var(--border)}
-.hpbar{height:8px;background:#33141a;border-radius:4px;overflow:hidden;margin-top:4px}
-.hpfill{height:100%;background:linear-gradient(90deg,#ff5a5a,#f0b90b);border-radius:4px}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;border:0;background:linear-gradient(180deg,#ffd44d,#f0b90b);color:#111;font-weight:900;margin-top:10px;cursor:pointer;box-shadow:0 3px 0 #9c7c00}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #9c7c00}
+.btn.sec{background:var(--card);color:#eaecef;border:1px solid var(--border);box-shadow:none}
 .status{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:13px}
-.lane{border:1px solid var(--border);border-radius:10px;padding:6px;margin:6px 0;background:#10151c}
-.lane.sel{border-color:var(--gold);box-shadow:0 0 0 2px rgba(240,185,11,.25)}
-.lane .tag{font-size:10px;color:var(--muted);text-align:center;margin-bottom:3px}
+.hpbar{height:9px;background:#2a1216;border-radius:5px;overflow:hidden;margin-top:4px;border:1px solid #000}
+.hpfill{height:100%;background:linear-gradient(90deg,#ff4040,#ffb340);border-radius:5px;transition:width .5s}
+.hpfill.ia{background:linear-gradient(90deg,#a030ff,#40c8ff)}
+#board{position:relative}
+.lane{border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:5px;margin:7px 0;position:relative;cursor:pointer;transition:transform .15s,border-color .15s}
+.lane.sel{border-color:var(--gold)}
+.lane:active{transform:scale(.985)}
+.lane .tag{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:3px;font-weight:800;opacity:.85}
+.lane .terr{position:absolute;inset:0;border-radius:12px;opacity:.16;z-index:0}
+.lane>*{position:relative;z-index:1}
+.lVolcan .terr{background:linear-gradient(180deg,#ff5a2b,#7a1500)}
+.lBosque .terr{background:linear-gradient(180deg,#4bd44b,#0a4d0a)}
+.lLago .terr{background:linear-gradient(180deg,#2bb8ff,#00305e)}
+.lCima .terr{background:linear-gradient(180deg,#b8c8ff,#3d2b8f)}
 .slotrow{display:flex;gap:4px}
-.slot{flex:1;min-height:44px;border:1px dashed #2a3340;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;text-align:center;padding:3px}
-.tile{width:100%;border-radius:7px;padding:4px 5px;font-size:11px;font-weight:800;line-height:1.25}
-.dia{background:linear-gradient(135deg,#0e2b38,#123f52);border:1px solid #4fd1f5;color:#c8f4ff}
-.oro{background:linear-gradient(135deg,#2b220e,#3f3412);border:1px solid #f0b90b;color:#ffe9a8}
-.plata{background:#1c2530;border:1px solid #93a3b8;color:#e6eef6}
-.dead{opacity:.35;text-decoration:line-through}
-.hand{display:flex;gap:6px;overflow-x:auto;padding:4px 0}
-.hcard{min-width:86px;border-radius:10px;padding:8px;font-size:11px;cursor:pointer;border:2px solid transparent}
-.hcard.sel{border-color:var(--gold);transform:translateY(-4px)}
-.hcard.no{opacity:.4}
-.hcard b{display:block;font-size:12px;margin-bottom:2px}
-.costo{display:inline-block;background:#000a;border-radius:50%;width:18px;height:18px;line-height:18px;text-align:center;margin-right:4px;font-size:10px}
-#log{max-height:110px;overflow-y:auto;font-size:11px;color:var(--muted);line-height:1.6}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
-.mbox{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;max-width:420px;width:100%;max-height:80vh;overflow-y:auto;text-align:center}
-.big{font-size:42px}
-.turno{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);font-size:26px;font-weight:900;color:var(--gold);text-shadow:0 2px 12px #000;pointer-events:none;opacity:0;transition:opacity .3s;z-index:60}
+.slot{flex:1;min-height:58px;border:1px dashed rgba(255,255,255,.14);border-radius:9px;display:flex;align-items:center;justify-content:center;padding:2px;transition:background .2s}
+.slot.hitflash{animation:hit .5s}
+@keyframes hit{0%{background:rgba(255,60,60,.55)}100%{background:transparent}}
+.slot.iamy{background:rgba(64,200,255,.05)}
+.u{width:100%;text-align:center;position:relative}
+.u .spr{font-size:30px;display:inline-block;animation:floaty 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+.u .spr.atk{animation:lunge .45s ease}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes lunge{0%{transform:translateY(0) scale(1)}45%{transform:translateY(-16px) scale(1.28)}100%{transform:translateY(0) scale(1)}}
+.u .nm{font-size:9px;font-weight:800;opacity:.95;text-shadow:0 1px 2px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.u .st{font-size:10px;font-weight:900;text-shadow:0 1px 2px #000}
+.st .a{color:#ff9d3c}.st .v{color:#6ee87c}
+.badges{font-size:9px;line-height:1}
+.u .aura{position:absolute;top:-8px;left:50%;transform:translateX(-50%);font-size:13px;animation:spin 4s linear infinite}
+@keyframes spin{to{transform:translateX(-50%) rotate(360deg)}}
+.u.dead .spr{animation:die .7s forwards}
+@keyframes die{to{transform:rotate(220deg) scale(.1);opacity:0}}
+.proj{position:fixed;font-size:26px;z-index:80;pointer-events:none;transition:left .38s linear,top .38s linear;filter:drop-shadow(0 0 6px #fff8)}
+.ring{position:fixed;width:54px;height:54px;border:3px solid #ffd44d;border-radius:50%;z-index:79;pointer-events:none;animation:ringp .6s ease-out forwards}
+@keyframes ringp{0%{transform:scale(.2);opacity:1}100%{transform:scale(1.7);opacity:0}}
+.hand{display:flex;gap:7px;overflow-x:auto;padding:4px 2px}
+.hcard{min-width:96px;border-radius:12px;padding:0 0 6px;cursor:pointer;position:relative;overflow:hidden;border:2px solid transparent;background:#10151c;box-shadow:0 3px 10px rgba(0,0,0,.5);transition:transform .15s}
+.hcard.sel{border-color:var(--gold);transform:translateY(-6px) scale(1.04)}
+.hcard.no{opacity:.45}
+.hcard .art{font-size:34px;text-align:center;padding:8px 0 2px;animation:floaty 3s ease-in-out infinite}
+.hcard .nmm{font-size:10.5px;font-weight:900;text-align:center;padding:0 4px;line-height:1.2}
+.hcard .costo{position:absolute;top:5px;left:5px;background:radial-gradient(circle at 30% 30%,#8be9ff,#1498d8);border:2px solid #fff;color:#023;border-radius:50%;width:22px;height:22px;line-height:19px;text-align:center;font-weight:900;font-size:11px;box-shadow:0 1px 3px #000}
+.hcard .gema{display:flex;justify-content:space-between;padding:4px 7px 0;font-size:11px;font-weight:900}
+.gema .a{color:#ff9d3c}.gema .v{color:#6ee87c}
+.hcard .picons{text-align:center;font-size:11px;padding:2px 0 0;letter-spacing:2px}
+.rdia{background:linear-gradient(160deg,#0e3a4d,#0a1622);border-top:3px solid #4fd1f5}
+.roro{background:linear-gradient(160deg,#3d2f0a,#1a1405);border-top:3px solid #f0b90b}
+.rplata{background:linear-gradient(160deg,#232f3d,#131a24);border-top:3px solid #93a3b8}
+.rtec{background:linear-gradient(160deg,#31184d,#150a22);border-top:3px solid #b06bff}
+#log{max-height:96px;overflow-y:auto;font-size:11px;color:var(--muted);line-height:1.55}
+#log b{color:#ffd44d;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(4,6,10,.82);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;backdrop-filter:blur(3px)}
+.mbox{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;max-width:420px;width:100%;max-height:82vh;overflow-y:auto;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.big{font-size:44px}
+.turno{position:fixed;left:50%;top:42%;transform:translate(-50%,-50%);font-size:24px;font-weight:900;color:#ffd44d;text-shadow:0 2px 16px #000;pointer-events:none;opacity:0;transition:opacity .3s;z-index:60;letter-spacing:1px}
+.gal{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:8px}
+.gal .hcard{cursor:default;min-width:104px}
+.titg{font-size:12px;font-weight:900;margin-top:14px;text-align:left;letter-spacing:1px}
 </style>
 </head>
 <body>
 <div id="menu">
   <div class="hdr">⚔️ Guerras de Bestias</div>
   <div class="box" style="text-align:center">
-    <div class="big">🐉</div>
-    <div style="font-weight:900;font-size:18px;margin-top:6px">Guerras de Bestias</div>
-    <div class="small" style="margin:8px 0">Juego de cartas original de Dragon Trade Labs. Bestias con Colas (💎 Diamante), Maestros Kage (🏅 Oro) y Ninjas del Clan (⚪ Plata) pelean por 4 territorios. Práctica gratis contra la IA del dragón.</div>
+    <div style="font-size:44px;animation:floaty 3s ease-in-out infinite">🐉</div>
+    <div style="font-weight:900;font-size:19px;margin-top:4px;background:linear-gradient(90deg,#ffd44d,#ff9d3c);-webkit-background-clip:text;background-clip:text;color:transparent">GUERRAS DE BESTIAS</div>
+    <div class="small" style="margin:8px 0">Juego de cartas ninja original de <b>Dragon Trade Labs</b>. Convoca Bestias con Colas 💎, Maestros Kage 🏅 y Ninjas ⚪. Sus poderes se ven en el tablero: ataques que cruzan carriles, perímetros que castigan al que se acerca. Práctica gratis contra la IA del dragón.</div>
     <button class="btn" onclick="nuevaPartida()">⚔️ Jugar práctica (vs IA)</button>
     <button class="btn sec" onclick="verCartas()">🃏 Ver las 24 cartas</button>
     <button class="btn sec" onclick="verReglas()">📜 Reglas</button>
@@ -53,417 +89,454 @@ body{background:var(--bg);color:#eaecef;font-family:system-ui,sans-serif;max-wid
 </div>
 
 <div id="game" style="display:none">
-  <div class="hdr" style="font-size:14px">⚔️ Guerras de Bestias <span class="small" id="turnoN">—</span></div>
-  <div class="box" style="padding:10px">
+  <div class="hdr" style="font-size:13px">⚔️ Guerras de Bestias <span class="small" id="turnoN">—</span></div>
+  <div class="box" style="padding:9px">
     <div class="status"><span>🐉 Dragón IA <span class="small" id="iaChakra"></span></span><span id="iaHpTxt">❤️ 25</span></div>
-    <div class="hpbar"><div class="hpfill" id="iaHpBar" style="width:100%"></div></div>
+    <div class="hpbar"><div class="hpfill ia" id="iaHpBar" style="width:100%"></div></div>
   </div>
-  <div class="box" style="padding:8px">
-    <div id="lanes"></div>
-  </div>
-  <div class="box" style="padding:10px">
-    <div class="status"><span>Tú <span class="small" id="tuChakra"></span> | <span class="small" id="tuMano"></span></span><span id="tuHpTxt">❤️ 25</span></div>
+  <div class="box" style="padding:7px"><div id="board"><div id="lanes"></div></div></div>
+  <div class="box" style="padding:9px">
+    <div class="status"><span>Tú <span class="small" id="tuChakra"></span></span><span id="tuHpTxt">❤️ 25</span></div>
     <div class="hpbar"><div class="hpfill" id="tuHpBar" style="width:100%"></div></div>
   </div>
   <div class="box" style="padding:8px">
-    <div class="small" style="font-weight:800;color:#eaecef">Tu mano <span class="small">(toca carta, luego carril)</span></div>
+    <div class="small" style="font-weight:800;color:#eaecef">Tu mano <span class="small">(toca carta → toca carril)</span></div>
     <div class="hand" id="mano"></div>
-    <button class="btn" id="btnTurno" onclick="finTurnoJugador()">⚔️ Batalla y pasar turno</button>
+    <button class="btn" id="btnTurno" onclick="finTurnoJugador()">⚔️ ¡BATALLA!</button>
   </div>
   <div class="box"><div id="log"></div></div>
-  <button class="btn sec" style="margin:0 10px;width:calc(100% - 20px)" onclick="if(confirm('¿Rendirse?'))nuevaPartida()">← Salir de la partida</button>
+  <button class="btn sec" style="margin:0 9px;width:calc(100% - 18px)" onclick="if(confirm('¿Rendirse?'))nuevaPartida()">← Salir de la partida</button>
 </div>
 <div class="turno" id="anuncio"></div>
 <div id="modal"></div>
 <script>
 // ================== CARTAS (24) ==================
-// r: 'dia'(bestia) 'oro'(kage) 'plata'(ninja) 'tec'(tecnica)
-// h: habilidad clave: cruz (ataca vecinos, cr=daño vecinos), peri (efecto al acercarse),
-//    aura (bonus a bestia de su carril), otro...
+// e: elemento para el efecto visual del poder. art: emoji del personaje.
 var CARTAS = {
-  b1:{n:'Colmillo Ámbar',r:'dia',c:2,a:2,v:3,t:'Bestia 1 cola',h:''},
-  b2:{n:'Zorro de Ceniza',r:'dia',c:3,a:3,v:4,t:'Bestia 2 colas',h:'peri: 1 daño al que se acerque',peri:{dano:1}},
-  b3:{n:'Serpiente del Risco',r:'dia',c:4,a:3,v:5,t:'Bestia 3 colas',h:'ataque cruzado a vecinos',cruz:1},
-  b4:{n:'Rey Mono de Jade',r:'dia',c:5,a:4,v:6,t:'Bestia 4 colas',h:'perímetro: escudo 2 a su carril',peri:{esc:2}},
-  b5:{n:'Caballo de Tormenta',r:'dia',c:5,a:5,v:5,t:'Bestia 5 colas',h:'cruce con daño completo',cruz:2},
-  b6:{n:'Tejón de la Niebla',r:'dia',c:6,a:4,v:8,t:'Bestia 6 colas',h:'perímetro: 2 de daño',peri:{dano:2}},
-  b7:{n:'Escarabajo del Cráter',r:'dia',c:7,a:6,v:7,t:'Bestia 7 colas',h:'cruce + perímetro 1',cruz:1,peri:{dano:1}},
-  b8:{n:'Lobo Ártico',r:'dia',c:8,a:7,v:9,t:'Bestia 8 colas',h:'cruce doble (vecinos completos)',cruz:3},
-  b9:{n:'Kuragami, la Devoradora',r:'dia',c:10,a:9,v:10,t:'Bestia 9 colas',h:'cruce + perímetro 2 + crece +1/+1 por turno',cruz:2,peri:{dano:2},crece:1},
-  k1:{n:'Kage del Viento',r:'oro',c:3,a:2,v:5,t:'Kage',h:'aura: +1 ataque a la bestia de su carril',aura:{a:1}},
-  k2:{n:'Kage de la Roca',r:'oro',c:4,a:3,v:7,t:'Kage',h:'aura: +2 vida a la bestia de su carril',aura:{v:2}},
-  k3:{n:'Kage de la Marea',r:'oro',c:4,a:2,v:6,t:'Kage',h:'aura: tu bestia ignora perímetros',aura:{ignoraPeri:1}},
-  k4:{n:'Kage del Trueno',r:'oro',c:5,a:4,v:6,t:'Kage',h:'aura: tu bestia cruza este turno',aura:{cruza:1}},
-  k5:{n:'Kage de la Sombra',r:'oro',c:5,a:3,v:8,t:'Kage',h:'al entrar: roba 1 carta',roba:1},
-  k6:{n:'Gran Kage Dorado',r:'oro',c:6,a:5,v:8,t:'Gran Kage',h:'al entrar: +1/+1 a todas tus bestias',enjefe:1},
-  n1:{n:'Genin Explorador',r:'plata',c:1,a:1,v:2,t:'Ninja',h:'al entrar: roba 1 carta',roba:1},
-  n2:{n:'Genin Ballesta',r:'plata',c:2,a:2,v:3,t:'Ninja',h:'ataca directo a la vida rival',directo:1},
-  n3:{n:'Chunin Muralla',r:'plata',c:2,a:1,v:5,t:'Ninja',h:'recibe los golpes de su carril',taunt:1},
-  n4:{n:'Chunin Sombra',r:'plata',c:3,a:3,v:3,t:'Ninja',h:'al entrar: 1 daño a carta rival',entraDano:1},
-  n5:{n:'Jonin Hoja Veloz',r:'plata',c:4,a:4,v:4,t:'Ninja',h:'+1 ataque con bestia adyacente',ady:1},
-  n6:{n:'Jonin Sellador',r:'plata',c:4,a:3,v:5,t:'Ninja',h:'al entrar: anula habilidad de una bestia rival',sella:1},
-  t1:{n:'Sello Rápido',r:'tec',c:2,a:0,v:0,t:'Técnica',h:'devuelve una carta rival a su mano',efecto:'devolver'},
-  t2:{n:'Tormenta de Kunai',r:'tec',c:3,a:0,v:0,t:'Técnica',h:'2 de daño a un carril rival completo',efecto:'kunai'},
-  t3:{n:'Invocación Ancestral',r:'tec',c:6,a:0,v:0,t:'Técnica',h:'convoca gratis una bestia de 1-3 colas de tu mazo',efecto:'invocar'}
+  b1:{n:'Colmillo Ámbar',r:'dia',c:2,a:2,v:3,t:'Bestia 1 cola',art:'🐺',e:'🔥',h:''},
+  b2:{n:'Zorro de Ceniza',r:'dia',c:3,a:3,v:4,t:'Bestia 2 colas',art:'🦊',e:'🔥',h:'peri: 1 daño al que se acerque',peri:{dano:1}},
+  b3:{n:'Serpiente del Risco',r:'dia',c:4,a:3,v:5,t:'Bestia 3 colas',art:'🐍',e:'💨',h:'ataque cruzado a vecinos',cruz:1},
+  b4:{n:'Rey Mono de Jade',r:'dia',c:5,a:4,v:6,t:'Bestia 4 colas',art:'🐒',e:'⛰️',h:'perímetro: escudo 2 a su carril',peri:{esc:2}},
+  b5:{n:'Caballo de Tormenta',r:'dia',c:5,a:5,v:5,t:'Bestia 5 colas',art:'🐎',e:'⚡',h:'cruce con daño completo',cruz:2},
+  b6:{n:'Tejón de la Niebla',r:'dia',c:6,a:4,v:8,t:'Bestia 6 colas',art:'🦡',e:'💧',h:'perímetro: 2 de daño',peri:{dano:2}},
+  b7:{n:'Escarabajo del Cráter',r:'dia',c:7,a:6,v:7,t:'Bestia 7 colas',art:'🪲',e:'🔥',h:'cruce + perímetro 1',cruz:1,peri:{dano:1}},
+  b8:{n:'Lobo Ártico',r:'dia',c:8,a:7,v:9,t:'Bestia 8 colas',art:'🐺',e:'❄️',h:'cruce doble (vecinos completos)',cruz:3},
+  b9:{n:'Kuragami, la Devoradora',r:'dia',c:10,a:9,v:10,t:'Bestia 9 colas',art:'🐉',e:'🌑',h:'cruce + perímetro 2 + crece +1/+1 por turno',cruz:2,peri:{dano:2},crece:1},
+  k1:{n:'Kage del Viento',r:'oro',c:3,a:2,v:5,t:'Kage',art:'🥷',e:'💨',h:'aura: +1 ataque a la bestia de su carril',aura:{a:1}},
+  k2:{n:'Kage de la Roca',r:'oro',c:4,a:3,v:7,t:'Kage',art:'🥷',e:'⛰️',h:'aura: +2 vida a la bestia de su carril',aura:{v:2}},
+  k3:{n:'Kage de la Marea',r:'oro',c:4,a:2,v:6,t:'Kage',art:'🥷',e:'💧',h:'aura: tu bestia ignora perímetros',aura:{ignoraPeri:1}},
+  k4:{n:'Kage del Trueno',r:'oro',c:5,a:4,v:6,t:'Kage',art:'🥷',e:'⚡',h:'aura: tu bestia cruza este turno',aura:{cruza:1}},
+  k5:{n:'Kage de la Sombra',r:'oro',c:5,a:3,v:8,t:'Kage',art:'🥷',e:'🌑',h:'al entrar: roba 1 carta',roba:1},
+  k6:{n:'Gran Kage Dorado',r:'oro',c:6,a:5,v:8,t:'Gran Kage',art:'👑',e:'✨',h:'al entrar: +1/+1 a todas tus bestias',enjefe:1},
+  n1:{n:'Genin Explorador',r:'plata',c:1,a:1,v:2,t:'Ninja',art:'🥷',e:'💨',h:'al entrar: roba 1 carta',roba:1},
+  n2:{n:'Genin Ballesta',r:'plata',c:2,a:2,v:3,t:'Ninja',art:'🥷',e:'🎯',h:'ataca directo a la vida rival',directo:1},
+  n3:{n:'Chunin Muralla',r:'plata',c:2,a:1,v:5,t:'Ninja',art:'🥷',e:'🛡️',h:'recibe los golpes de su carril',taunt:1},
+  n4:{n:'Chunin Sombra',r:'plata',c:3,a:3,v:3,t:'Ninja',art:'🥷',e:'🌑',h:'al entrar: 1 daño a carta rival',entraDano:1},
+  n5:{n:'Jonin Hoja Veloz',r:'plata',c:4,a:4,v:4,t:'Ninja',art:'🥷',e:'⚡',h:'+1 ataque con bestia adyacente',ady:1},
+  n6:{n:'Jonin Sellador',r:'plata',c:4,a:3,v:5,t:'Ninja',art:'🥷',e:'📜',h:'al entrar: anula habilidad de una bestia rival',sella:1},
+  t1:{n:'Sello Rápido',r:'tec',c:2,a:0,v:0,t:'Técnica',art:'📜',e:'📜',h:'devuelve una carta rival a su mano',efecto:'devolver'},
+  t2:{n:'Tormenta de Kunai',r:'tec',c:3,a:0,v:0,t:'Técnica',art:'🗡️',e:'💨',h:'2 de daño a un carril rival completo',efecto:'kunai'},
+  t3:{n:'Invocación Ancestral',r:'tec',c:6,a:0,v:0,t:'Técnica',art:'🌀',e:'🌀',h:'convoca gratis una bestia de 1-3 colas de tu mazo',efecto:'invocar'}
 };
 var NOMBRES = Object.keys(CARTAS);
-var LANES = ['Volcán','Bosque','Lago','Cima'];
+var LANES = [{n:'VOLCÁN',cls:'lVolcan'},{n:'BOSQUE',cls:'lBosque'},{n:'LAGO',cls:'lLago'},{n:'CIMA',cls:'lCima'}];
 var MAX_HP = 25;
+var S=null, selCarta=null;
 
-// ================== ESTADO ==================
-var S = null;
-var selCarta = null;   // id de carta seleccionada en mano
-var selTec = null;     // {efecto} pendiente de elegir carril
-
-function mezclar(a){ for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
+function mezclar(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function nuevaPartida(){
   document.getElementById('menu').style.display='none';
   document.getElementById('game').style.display='block';
   document.getElementById('modal').innerHTML='';
-  S = {
-    turno: 1, activo: 'tu',
-    tu: hacerLado(), ia: hacerLado()
-  };
-  // mano inicial 4, roban 1 extra cada uno al empezar (regla simple)
-  for(var i=0;i<4;i++){ robar('tu',true); robar('ia',true); }
-  S.tu.chakra = 2; S.ia.chakra = 2;
-  log('⚔️ ¡Comienza la batalla! Tu turno.');
+  S={turno:1,activo:'tu',tu:hacerLado(),ia:hacerLado()};
+  for(var i=0;i<4;i++){robar('tu',true);robar('ia',true);}
+  S.tu.chakra=2; S.ia.chakra=2;
+  log('⚔️ <b>¡Comienza la batalla!</b> Tu turno. Toca una carta y luego un territorio.');
   render();
 }
-function hacerLado(){
-  return { hp:MAX_HP, chakra:0, mano:[], mazo:mezclar(NOMBRES.slice()), batalla:false,
-    carriles: LANES.map(function(){ return { bestia:null, def:null, escudo:0 }; }) };
-}
-function robar(lado, silencio){
-  var L = S[lado];
-  if(L.mazo.length===0){ if(!silencio) log((lado==='tu'?'Tu':'La IA del dragón se quedó sin')+' mazo vacío.'); return; }
-  if(L.mano.length>=6){ if(!silencio&&lado==='tu') log('Mano llena: quemas una carta.'); L.mazo.pop(); return; }
+function hacerLado(){return {hp:MAX_HP,chakra:0,mano:[],mazo:mezclar(NOMBRES.slice()),carriles:LANES.map(function(){return {bestia:null,def:null,escudo:0};})};}
+function robar(lado,silencio){
+  var L=S[lado];
+  if(L.mazo.length===0){if(!silencio)log((lado==='tu'?'Tu mazo está vacío.':'La IA se quedó sin mazo.'));return;}
+  if(L.mano.length>=6){L.mazo.pop();return;}
   L.mano.push(L.mazo.pop());
 }
-function log(t){ var el=document.getElementById('log'); if(!el) return; el.innerHTML += '<div>• '+t+'</div>'; el.scrollTop = el.scrollHeight; }
+function log(t){var el=document.getElementById('log');if(!el)return;el.innerHTML+='<div>• '+t+'</div>';el.scrollTop=el.scrollHeight;}
 
-// ================== JUGAR CARTAS ==================
+// ================== EFECTOS VISUALES ==================
+function laneRect(lado,i,tipo){
+  var idx=(lado==='ia')?i:i; // slots: ia bestia/def arriba, tu abajo
+  var el=document.querySelectorAll('#lanes .lane')[i];
+  if(!el)return null;
+  var lr=el.getBoundingClientRect();
+  var row=el.querySelectorAll('.slotrow')[lado==='ia'?0:1];
+  var slot=row.querySelectorAll('.slot')[tipo==='bestia'?0:1];
+  var r=slot?slot.getBoundingClientRect():lr;
+  return {x:r.left+r.width/2,y:r.top+r.height/2};
+}
+function proyectil(desde,hasta,emoji){
+  if(!desde||!hasta)return;
+  var d=document.createElement('div');
+  d.className='proj'; d.textContent=emoji||'✨';
+  d.style.left=desde.x+'px'; d.style.top=desde.y+'px';
+  document.body.appendChild(d);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    d.style.left=hasta.x+'px'; d.style.top=hasta.y+'px';
+  });});
+  setTimeout(function(){d.remove();},420);
+}
+function impacto(lado,i,tipo){
+  var p=laneRect(lado,i,tipo);
+  if(!p)return;
+  var r=document.createElement('div'); r.className='ring';
+  r.style.left=(p.x-27)+'px'; r.style.top=(p.y-27)+'px';
+  document.body.appendChild(r);
+  setTimeout(function(){r.remove();},650);
+  var el=document.querySelectorAll('#lanes .lane')[i];
+  if(el){var row=el.querySelectorAll('.slotrow')[lado==='ia'?0:1];
+    var slot=row.querySelectorAll('.slot')[tipo==='bestia'?0:1];
+    if(slot){slot.classList.remove('hitflash');void slot.offsetWidth;slot.classList.add('hitflash');}}
+}
+function animAtk(lado,i){
+  var el=document.querySelectorAll('#lanes .lane')[i];
+  if(!el)return;
+  var row=el.querySelectorAll('.slotrow')[lado==='ia'?0:1];
+  var slot=row.querySelectorAll('.slot')[0];
+  var spr=slot?slot.querySelector('.spr'):null;
+  if(spr){spr.classList.remove('atk');void spr.offsetWidth;spr.classList.add('atk');}
+}
+
+// ================== JUGAR ==================
 function tocarCarta(idx){
-  var L = S.tu;
-  var id = L.mano[idx];
-  if(id==null) return;
-  var c = CARTAS[id];
-  if(c.c > L.chakra){ showOk('Necesitas '+c.c+' de Chakra (tienes '+L.chakra+')','⚠️'); return; }
-  if(c.r==='tec'){ selCarta=idx; selTec=c; selLane=-1; render(true); return; }
-  selCarta=idx; selTec=null;
-  render(true);
+  var L=S.tu, id=L.mano[idx];
+  if(id==null)return;
+  var c=CARTAS[id];
+  if(c.c>L.chakra){showOk('Necesitas '+c.c+' 🌀 (tienes '+L.chakra+')','⚠️');return;}
+  selCarta=idx; render(true);
+  showOk('Toca el territorio donde jugar a <b>'+c.n+'</b>',c.art);
 }
 function tocarCarril(i){
-  if(selCarta==null) return;
+  if(selCarta==null)return;
   var L=S.tu, id=L.mano[selCarta], c=CARTAS[id];
-  if(c.r==='tec'){ usarTecnica('tu',c,i,id); return; }
-  var cr = L.carriles[i];
+  if(c.r==='tec'){usarTecnica('tu',c,i,id);return;}
+  var cr=L.carriles[i];
   if(c.r==='dia'){
-    if(cr.bestia){ showOk('Ese territorio ya tiene tu bestia','⚠️'); return; }
-    cr.bestia = {id:id, a:c.a, v:c.v, maxv:c.v, sel:false, crece:c.crece||0, cruz:c.cruz||0, peri:c.peri||null, directo:0};
-    if(c.peri) cr.bestia.peri = c.peri;
-    log('Juegas 💎 '+c.n+' en '+LANES[i]+'.');
+    if(cr.bestia){showOk('Ese territorio ya tiene tu bestia','⚠️');return;}
+    cr.bestia={id:id,a:c.a,v:c.v,maxv:c.v,crece:c.crece||0,cruz:c.cruz||0,peri:c.peri?JSON.parse(JSON.stringify(c.peri)):null,directo:0};
+    log('Convocas 💎 <b>'+c.n+'</b> en '+LANES[i].n+'.');
+    impacto('tu',i,'bestia');
   } else {
-    if(cr.def){ showOk('Ese territorio ya tiene defensor','⚠️'); return; }
-    cr.def = {id:id, a:c.a, v:c.v, maxv:c.v, aura:c.aura||null, directo:c.directo||0, taunt:c.taunt||0, ady:c.ady||0};
-    log('Juegas '+(c.r==='oro'?'🏅':'⚪')+' '+c.n+' en '+LANES[i]+'.');
+    if(cr.def){showOk('Ese territorio ya tiene defensor','⚠️');return;}
+    cr.def={id:id,a:c.a,v:c.v,maxv:c.v,aura:c.aura||null,directo:c.directo||0,taunt:c.taunt||0,ady:c.ady||0};
+    log('Juegas '+(c.r==='oro'?'🏅':'⚪')+' <b>'+c.n+'</b> en '+LANES[i].n+'.');
+    impacto('tu',i,'def');
   }
-  L.chakra -= c.c; L.mano.splice(selCarta,1); selCarta=null;
-  // efectos al entrar
-  if(c.roba){ robar('tu'); log('Robas '+c.roba+' carta.'); }
-  if(c.entraDano){ entraDano('ia',c.entraDano); }
-  if(c.sella){ sellar('ia'); }
-  if(c.enjefe){ L.carriles.forEach(function(cr){ if(cr.bestia){ cr.bestia.a++; cr.bestia.v++; cr.bestia.maxv++; } }); log('¡El Gran Kage Dorado potencia a todas tus bestias +1/+1!'); }
-  // PERIMETRO rival: me acerqué a carriles vecinos de bestias rivales
-  activarPerimetro('ia', i);
+  L.chakra-=c.c; L.mano.splice(selCarta,1); selCarta=null;
+  if(c.roba){robar('tu');log('Robas 1 carta 🃏');}
+  if(c.entraDano)entraDano('ia',c.entraDano);
+  if(c.sella)sellar('ia');
+  if(c.enjefe){L.carriles.forEach(function(cr2){if(cr2.bestia){cr2.bestia.a++;cr2.bestia.v++;cr2.bestia.maxv++;}});log('✨ ¡El Gran Kage Dorado potencia +1/+1 a todas tus bestias!');}
+  activarPerimetro('ia',i);
   render();
 }
-function entraDano(rival, d){
-  // daño a la carta rival con más vida del lado rival
-  var best=null, bl=-1, tipo='';
+function entraDano(rival,d){
+  var best=null,bl=-1,tipo='';
   S[rival].carriles.forEach(function(cr,i){
-    if(cr.bestia && (!best||cr.bestia.v>best.v)){ best=cr.bestia; bl=i; tipo='bestia'; }
-    if(cr.def && (!best||cr.def.v>best.v)){ best=cr.def; bl=i; tipo='def'; }
+    if(cr.bestia&&(!best||cr.bestia.v>best.v)){best=cr.bestia;bl=i;tipo='bestia';}
+    if(cr.def&&(!best||cr.def.v>best.v)){best=cr.def;bl=i;tipo='def';}
   });
-  if(best){ best.v-=d; log('Chunin Sombra hace '+d+' de daño a '+nombreDe(rival,best)+'.'); revisarMuerte(rival,bl,tipo); }
-  else log('No hay cartas rivales a las que dañar.');
+  if(best){best.v-=d;log('🌑 '+d+' de daño sombra a <b>'+CARTAS[best.id].n+'</b>.');impacto(rival,bl,tipo);revisarMuerte(rival,bl,tipo);}
 }
 function sellar(rival){
-  var best=null,bl=-1,tipo='';
-  S[rival].carriles.forEach(function(cr,i){ if(cr.bestia&&(!best||cr.bestia.v>best.v)){best=cr.bestia;bl=i;tipo='bestia';} });
-  if(best){ best.cruz=0; best.peri=null; best.crece=0; log('Jonin Sellador anula las habilidades de '+nombreDe(rival,best)+'.'); }
+  var best=null,bl=-1;
+  S[rival].carriles.forEach(function(cr,i){if(cr.bestia&&(!best||cr.bestia.v>best.v)){best=cr.bestia;bl=i;}});
+  if(best){best.cruz=0;best.peri=null;best.crece=0;log('📜 Sello: se anulan los poderes de <b>'+CARTAS[best.id].n+'</b>.');}
 }
 function usarTecnica(lado,c,i,id){
-  var rival = lado==='tu'?'ia':'tu';
-  var L=S[lado];
+  var rival=lado==='tu'?'ia':'tu', L=S[lado];
   if(c.efecto==='kunai'){
     var cr=S[rival].carriles[i];
-    var d=2, hit=false;
-    if(cr.bestia){cr.bestia.v-=d;hit=true;} if(cr.def){cr.def.v-=d;hit=true;}
-    log((lado==='tu'?'Lanzas':'La IA lanza')+' 🌪️ Tormenta de Kunai en '+LANES[i]+' (-2).');
-    revisarMuerte(rival,i,'bestia'); revisarMuerte(rival,i,'def');
+    log('🗡️ <b>Tormenta de Kunai</b> sobre '+LANES[i].n+' (-2 a todo).');
+    if(cr.bestia){proyectil(laneRect(lado,i,'def'),laneRect(rival,i,'bestia'),'🗡️');cr.bestia.v-=2;}
+    if(cr.def){proyectil(laneRect(lado,i,'def'),laneRect(rival,i,'def'),'🗡️');cr.def.v-=2;}
+    revisarMuerte(rival,i,'bestia');revisarMuerte(rival,i,'def');
   } else if(c.efecto==='devolver'){
-    var cr=S[rival].carriles[i], dev=null;
-    if(cr.bestia){dev=cr.bestia;cr.bestia=null;} else if(cr.def){dev=cr.def;cr.def=null;}
-    if(dev){ S[rival].mano.push(dev.id); log('Sello Rápido devuelve a la mano rival una carta.'); }
-    else { showOk('Ese carril rival está vacío','⚠️'); return; }
+    var cr=S[rival].carriles[i],dev=null,tipo='';
+    if(cr.bestia){dev=cr.bestia;cr.bestia=null;tipo='bestia';}
+    else if(cr.def){dev=cr.def;cr.def=null;tipo='def';}
+    if(!dev){showOk('Ese carril rival está vacío','⚠️');return;}
+    S[rival].mano.push(dev.id);
+    proyectil(laneRect(rival,i,tipo),laneRect(lado,i,'def'),'📜');
+    log('📜 <b>Sello Rápido</b>: una carta rival regresa a su mano.');
   } else if(c.efecto==='invocar'){
-    var idx=L.mazo.map(function(x){return CARTAS[x];}).findIndex(function(x){return x.r==='dia'&&x.c<=4;});
-    var cid=null;
-    if(idx>=0){ cid=L.mazo[idx]; L.mazo.splice(idx,1); }
-    else { var pool=NOMBRES.filter(function(x){return CARTAS[x].r==='dia'&&CARTAS[x].c<=4;}); cid=pool[Math.floor(Math.random()*pool.length)]; }
-    var cc=CARTAS[cid];
     var cr=L.carriles[i];
-    if(cr.bestia){ showOk('Ese territorio ya tiene bestia','⚠️'); return; }
-    cr.bestia={id:cid,a:cc.a,v:cc.v,maxv:cc.v,cruz:cc.cruz||0,peri:cc.peri||null,crece:0};
-    log('Invocación Ancestral trae 💎 '+cc.n+' gratis a '+LANES[i]+'.');
+    if(cr.bestia){showOk('Ese territorio ya tiene bestia','⚠️');return;}
+    var idx=L.mazo.map(function(x){return CARTAS[x];}).findIndex(function(x){return x.r==='dia'&&x.c<=4;});
+    var cid;
+    if(idx>=0){cid=L.mazo[idx];L.mazo.splice(idx,1);}
+    else{var pool=NOMBRES.filter(function(x){return CARTAS[x].r==='dia'&&CARTAS[x].c<=4;});cid=pool[Math.floor(Math.random()*pool.length)];}
+    var cc=CARTAS[cid];
+    cr.bestia={id:cid,a:cc.a,v:cc.v,maxv:cc.v,cruz:cc.cruz||0,peri:cc.peri?JSON.parse(JSON.stringify(cc.peri)):null,crece:0};
+    log('🌀 <b>Invocación Ancestral</b>: llega gratis 💎 '+cc.n+' a '+LANES[i].n+'!');
+    impacto(lado,i,'bestia');
     activarPerimetro(rival,i);
   }
   L.chakra-=c.c; var k=L.mano.indexOf(id); if(k>=0)L.mano.splice(k,1);
-  selCarta=null; selTec=null;
-  render();
+  selCarta=null; render();
 }
 
 // ================== PERÍMETRO ==================
-function activarPerimetro(rival, i){
-  // el lado "rival" reacciona cuando "me" (el que jugó) entró en el carril i
-  [i-1,i+1,i].forEach(function(j){
-    if(j<0||j>3||j===i) return;
-    var cr=S[rival].carriles[j];
-    var best=cr&&cr.bestia;
-    if(best&&best.peri){
-      if(best.peri.dano){
-        // el que se acerca recibe el daño
-        var yo=S[rival==='ia'?'tu':'ia'];
-        var yc=yo.carriles[i];
-        if(yc.bestia){ yc.bestia.v-=best.peri.dano; log('⚠️ Perímetro: '+nombreDe(rival,best)+' castiga con '+best.peri.dano+' a quien se acercó.'); revisarMuerte(rival==='ia'?'tu':'ia',i,'bestia'); }
-      }
-      if(best.peri.esc){ cr.escudo+=best.peri.esc; log('⚠️ Perímetro: '+nombreDe(rival,best)+' levanta un escudo de '+best.peri.esc+' en su carril.'); }
+function activarPerimetro(rival,i){
+  var yo=rival==='ia'?'tu':'ia';
+  [i-1,i+1].forEach(function(j){
+    if(j<0||j>3)return;
+    var cr=S[rival].carriles[j], best=cr&&cr.bestia;
+    if(!best||!best.peri)return;
+    if(best.peri.dano){
+      var yc=S[yo].carriles[i];
+      if(yc.bestia){yc.bestia.v-=best.peri.dano;
+        log('⚠️ <b>PERÍMETRO</b>: '+CARTAS[best.id].n+' ('+CARTAS[best.id].e+') castiga con '+best.peri.dano+' a quien se acercó.');
+        proyectil(laneRect(rival,j,'bestia'),laneRect(yo,i,'bestia'),CARTAS[best.id].e);
+        revisarMuerte(yo,i,'bestia');}
     }
+    if(best.peri.esc){cr.escudo+=best.peri.esc;
+      log('🛡️ <b>PERÍMETRO</b>: '+CARTAS[best.id].n+' levanta escudo de '+best.peri.esc+'.');
+      impacto(rival,j,'bestia');}
   });
 }
 
 // ================== BATALLA ==================
 function ataqueDe(lado){
-  var rival = lado==='tu'?'ia':'tu';
-  var L=S[lado], R=S[rival];
+  var rival=lado==='tu'?'ia':'tu';
+  var L=S[lado];
   var ignoraPeri=false, cruceExtra=[];
-  // auras del lado atacante
   L.carriles.forEach(function(cr,i){
     if(cr.def&&cr.def.aura){
-      if(cr.def.aura.a&&cr.bestia) cr.bestia.a+=cr.def.aura.a;
-      if(cr.def.aura.v&&cr.bestia){ cr.bestia.v+=cr.def.aura.v; cr.bestia.maxv+=cr.def.aura.v; }
-      if(cr.def.aura.ignoraPeri) ignoraPeri=true;
-      if(cr.def.aura.cruza&&cr.bestia) cruceExtra.push(i);
+      if(cr.def.aura.a&&cr.bestia)cr.bestia.a+=cr.def.aura.a;
+      if(cr.def.aura.v&&cr.bestia){cr.bestia.v+=cr.def.aura.v;cr.bestia.maxv+=cr.def.aura.v;}
+      if(cr.def.aura.ignoraPeri)ignoraPeri=true;
+      if(cr.def.aura.cruza&&cr.bestia)cruceExtra.push(i);
     }
   });
   L.carriles.forEach(function(cr,i){
     var b=cr.bestia;
-    if(!b) return;
+    if(!b)return;
     var atq=b.a;
-    if(!ignoraPeri) activarPerimetro(rival,i); // acercarse dispara perímetro
-    // daño directo al frente
-    golpear(rival,i,atq,b,lado);
-    // ataque cruzado
+    animAtk(lado,i);
+    if(!ignoraPeri)activarPerimetro(rival,i);
+    golpear(rival,i,atq,b,lado,false);
     var cruz=b.cruz||0;
-    if(cruceExtra.indexOf(i)>=0) cruz=Math.max(cruz,1);
+    if(cruceExtra.indexOf(i)>=0)cruz=Math.max(cruz,1);
     if(cruz){
       [i-1,i+1].forEach(function(j){
-        if(j<0||j>3) return;
-        var d = cruz===1?Math.floor(atq/2):atq;
-        if(cruz===3) d=atq;
+        if(j<0||j>3)return;
+        var d=cruz===1?Math.floor(atq/2):atq;
+        proyectil(laneRect(lado,i,'bestia'),laneRect(rival,j,CARTAS[b.id]&&S[rival].carriles[j].bestia?'bestia':'def'),CARTAS[b.id].e);
         golpear(rival,j,d,b,lado,true);
       });
     }
   });
-  // limpiar buffs temporales de ataque
-  L.carriles.forEach(function(cr){ if(cr.bestia&&cr.buffA){ cr.bestia.a-=cr.buffA; cr.buffA=0; } if(cr.escudoAlTurno){cr.escudoAlTurno=0;} });
 }
 function golpear(rival,i,d,b,lado,cruz){
-  if(d<=0) return;
-  var cr=S[rival].carriles[i];
-  var R=S[rival];
-  // escudo absorbe
-  if(cr.escudo>0){ var abs=Math.min(cr.escudo,d); cr.escudo-=abs; d-=abs; log('🛡️ Escudo absorbe '+abs+' en '+LANES[i]+'.'); if(d<=0) return; }
-  var obj=null, tipo='';
-  if(cr.bestia){ obj=cr.bestia; tipo='bestia'; }
-  else if(cr.def){ obj=cr.def; tipo='def'; }
+  if(d<=0)return;
+  var cr=S[rival].carriles[i], R=S[rival];
+  if(cr.escudo>0){var abs=Math.min(cr.escudo,d);cr.escudo-=abs;d-=abs;log('🛡️ Escudo absorbe '+abs+' en '+LANES[i].n+'.');if(d<=0)return;}
+  var obj=null,tipo='';
+  if(cr.bestia){obj=cr.bestia;tipo='bestia';}
+  else if(cr.def){obj=cr.def;tipo='def';}
+  if(!cruz)proyectil(laneRect(lado,i,'bestia'),laneRect(rival,i,tipo),CARTAS[b.id].e);
   if(obj){
-    obj.v-=d;
-    log((cruz?'↗ Ataque cruzado ':'⚔️ ')+nombreDe(lado,b)+' hace '+d+' a '+nombreDe(rival,obj)+' en '+LANES[i]+'.');
+    obj.v-=d; impacto(rival,i,tipo);
+    log((cruz?'↗ ':'⚔️ ')+CARTAS[b.id].art+' <b>'+CARTAS[b.id].n+'</b> hace '+d+' a '+CARTAS[obj.id].n+' ('+LANES[i].n+').');
     revisarMuerte(rival,i,tipo);
-  } else if(b.directo){
-    R.hp-=d; log('🎯 '+nombreDe(lado,b)+' golpea directo la vida (-'+d+').');
   } else {
-    R.hp-=d; log('⚔️ '+nombreDe(lado,b)+' golpea directo la vida rival (-'+d+').');
+    R.hp-=d; log('💔 ¡Golpe directo a la vida! -'+d+' ('+CARTAS[b.id].n+').');
   }
 }
 function revisarMuerte(lado,i,tipo){
-  if(lado!=='tu'&&lado!=='ia') return;
+  if(lado!=='tu'&&lado!=='ia')return;
   var cr=S[lado].carriles[i];
-  if(tipo==='bestia'&&cr.bestia&&cr.bestia.v<=0){ log('💀 Muere '+nombreDe(lado,cr.bestia)+' ('+LANES[i]+').'); cr.bestia=null; }
-  if(tipo==='def'&&cr.def&&cr.def.v<=0){ log('💀 Cae '+nombreDe(lado,cr.def)+' ('+LANES[i]+').'); cr.def=null; }
+  if(tipo==='bestia'&&cr.bestia&&cr.bestia.v<=0){log('💀 <b>'+CARTAS[cr.bestia.id].n+'</b> cae en '+LANES[i].n+'.');cr.bestia=null;}
+  if(tipo==='def'&&cr.def&&cr.def.v<=0){log('💀 <b>'+CARTAS[cr.def.id].n+'</b> cae en '+LANES[i].n+'.');cr.def=null;}
 }
-function nombreDe(lado,o){ var c=CARTAS[o.id]; return c?c.n:'?'; }
 
 // ================== TURNOS ==================
 function finTurnoJugador(){
-  if(S.activo!=='tu') return;
+  if(S.activo!=='tu')return;
   ataqueDe('tu');
-  if(checkFin()) return;
-  S.activo='ia'; anuncio('🐉 Turno del dragón');
-  setTimeout(turnoIA, 900);
+  render();
+  if(checkFin())return;
+  S.activo='ia'; anuncio('🐉 Turno del dragón'); render();
+  setTimeout(turnoIA,1100);
 }
 function turnoIA(){
   var L=S.ia;
-  L.chakra=Math.min(10,L.chakra+1);
-  robar('ia');
-  // crecimiento de Kuragami
-  L.carriles.forEach(function(cr){ if(cr.bestia&&cr.bestia.crece){cr.bestia.a+=cr.bestia.crece;cr.bestia.v+=cr.bestia.crece;cr.bestia.maxv+=cr.bestai?0:cr.bestia.crece;} });
-  // jugar cartas: bestias primero, luego defensores, luego tecnicas
+  L.chakra=Math.min(10,L.chakra+1); robar('ia');
+  L.carriles.forEach(function(cr){if(cr.bestia&&cr.bestia.crece){cr.bestia.a+=cr.bestia.crece;cr.bestia.v+=cr.bestia.crece;cr.bestia.maxv+=cr.bestia.crece;}});
   var jugo=true;
   while(jugo){
     jugo=false;
     for(var i=0;i<L.mano.length;i++){
-      var id=L.mano[i], c=CARTAS[id];
-      if(c.c>L.chakra) continue;
-      if(c.r==='dia'){
-        var bl=-1;
-        for(var j=0;j<4;j++){ if(!L.carriles[j].bestia&&(bl<0||rivalPeligro(j)<rivalPeligro(bl))) bl=j; }
-        if(bl<0) continue;
-        var cr=L.carriles[bl];
-        cr.bestia={id:id,a:c.a,v:c.v,maxv:c.v,cruz:c.cruz||0,peri:c.peri?JSON.parse(JSON.stringify(c.peri)):null,crece:c.crece||0};
-        L.chakra-=c.c; L.mano.splice(i,1); log('La IA convoca 💎 '+c.n+' en '+LANES[bl]+'.');
-        activarPerimetro('tu',bl); jugo=true; break;
-      }
-    }
-    if(jugo) continue;
-    for(var i=0;i<L.mano.length;i++){
-      var id=L.mano[i], c=CARTAS[id];
-      if(c.c>L.chakra) continue;
-      if(c.r==='oro'||c.r==='plata'){
-        var bl=-1;
-        for(var j=0;j<4;j++){ if(!L.carriles[j].def){ bl=j; break; } }
-        if(bl<0) continue;
-        L.carriles[bl].def={id:id,a:c.a,v:c.v,maxv:c.v,aura:c.aura||null,directo:c.directo||0,taunt:c.taunt||0,ady:c.ady||0};
-        L.chakra-=c.c; L.mano.splice(i,1); log('La IA juega '+c.n+' en '+LANES[bl]+'.');
-        if(c.roba) robar('ia');
-        if(c.entraDano) entraDano('tu',c.entraDano);
-        activarPerimetro('tu',bl); jugo=true; break;
-      }
-    }
-    if(jugo) continue;
-    for(var i=0;i<L.mano.length;i++){
-      var id=L.mano[i], c=CARTAS[id];
-      if(c.c>L.chakra||c.r!=='tec') continue;
+      var id=L.mano[i],c=CARTAS[id];
+      if(c.c>L.chakra||c.r!=='dia')continue;
       var bl=-1;
-      for(var j=0;j<4;j++){ if(S.tu.carriles[j].bestia||S.tu.carriles[j].def){ bl=j; break; } }
-      if(bl<0) continue;
-      usarTecnicaIA(c,bl,id); jugo=true; break;
+      for(var j=0;j<4;j++){if(!L.carriles[j].bestia&&(bl<0||rivalPeligro(j)<rivalPeligro(bl)))bl=j;}
+      if(bl<0)continue;
+      L.carriles[bl].bestia={id:id,a:c.a,v:c.v,maxv:c.v,cruz:c.cruz||0,peri:c.peri?JSON.parse(JSON.stringify(c.peri)):null,crece:c.crece||0};
+      L.chakra-=c.c;L.mano.splice(i,1);
+      log('La IA convoca 💎 <b>'+c.n+'</b> en '+LANES[bl].n+'.');
+      impacto('ia',bl,'bestia'); activarPerimetro('tu',bl);
+      jugo=true;break;
+    }
+    if(jugo)continue;
+    for(var i=0;i<L.mano.length;i++){
+      var id=L.mano[i],c=CARTAS[id];
+      if(c.c>L.chakra||(c.r!=='oro'&&c.r!=='plata'))continue;
+      var bl=-1;
+      for(var j=0;j<4;j++){if(!L.carriles[j].def){bl=j;break;}}
+      if(bl<0)continue;
+      L.carriles[bl].def={id:id,a:c.a,v:c.v,maxv:c.v,aura:c.aura||null,directo:c.directo||0,taunt:c.taunt||0,ady:c.ady||0};
+      L.chakra-=c.c;L.mano.splice(i,1);
+      log('La IA juega <b>'+c.n+'</b> en '+LANES[bl].n+'.');
+      impacto('ia',bl,'def');
+      if(c.roba)robar('ia');
+      if(c.entraDano)entraDano('tu',c.entraDano);
+      activarPerimetro('tu',bl);
+      jugo=true;break;
+    }
+    if(jugo)continue;
+    for(var i=0;i<L.mano.length;i++){
+      var id=L.mano[i],c=CARTAS[id];
+      if(c.c>L.chakra||c.r!=='tec')continue;
+      var bl=-1;
+      for(var j=0;j<4;j++){if(S.tu.carriles[j].bestia||S.tu.carriles[j].def){bl=j;break;}}
+      if(bl<0)continue;
+      usarTecnicaIA(c,bl,id);jugo=true;break;
     }
   }
+  render();
   ataqueDe('ia');
-  if(checkFin()) return;
-  // turno del jugador
-  S.activo='tu'; S.turno++;
-  S.tu.chakra=Math.min(10,S.tu.chakra+1);
-  robar('tu');
-  S.tu.carriles.forEach(function(cr){ if(cr.bestia&&cr.bestia.crece){cr.bestia.a+=cr.bestia.crece;cr.bestia.v+=cr.bestia.crece;cr.bestia.maxv+=cr.bestia.crece;} });
-  log('— Turno '+S.turno+': es tu turno —');
+  if(checkFin())return;
+  S.activo='tu';S.turno++;
+  S.tu.chakra=Math.min(10,S.tu.chakra+1);robar('tu');
+  S.tu.carriles.forEach(function(cr){if(cr.bestia&&cr.bestia.crece){cr.bestia.a+=cr.bestia.crece;cr.bestia.v+=cr.bestia.crece;cr.bestia.maxv+=cr.bestia.crece;}});
+  log('— <b>Turno '+S.turno+'</b>: es tu turno —');
+  anuncio('⚔️ Tu turno');
   render();
 }
-function rivalPeligro(i){ var R=S.tu.carriles[i]; return (R.bestia?R.bestia.v:0)+(R.def?R.def.v:0); }
+function rivalPeligro(i){var R=S.tu.carriles[i];return (R.bestia?R.bestia.v:0)+(R.def?R.def.v:0);}
 function usarTecnicaIA(c,i,id){
-  if(c.efecto==='kunai'){ var cr=S.tu.carriles[i]; if(cr.bestia)cr.bestia.v-=2; if(cr.def)cr.def.v-=2; log('La IA lanza Tormenta de Kunai en '+LANES[i]+'.'); revisarMuerte('tu',i,'bestia'); revisarMuerte('tu',i,'def'); }
-  else if(c.efecto==='devolver'){ var cr=S.tu.carriles[i]; if(cr.bestia){S.tu.mano.push(cr.bestia.id);log('La IA devuelve una de tus cartas a tu mano.');cr.bestia=null;} else if(cr.def){S.tu.mano.push(cr.def.id);cr.def=null;} }
-  else if(c.efecto==='invocar'){ var cr=S.ia.carriles[i]; if(!cr.bestia){ var pool=NOMBRES.filter(function(x){return CARTAS[x].r==='dia'&&CARTAS[x].c<=4;}); var cid=pool[Math.floor(Math.random()*pool.length)]; var cc=CARTAS[cid]; cr.bestia={id:cid,a:cc.a,v:cc.v,maxv:cc.v,cruz:cc.cruz||0,peri:cc.peri||null,crece:0}; log('La IA invoca '+cc.n+'.'); } }
-  S.ia.chakra-=c.c; var k=S.ia.mano.indexOf(id); if(k>=0)S.ia.mano.splice(k,1);
+  if(c.efecto==='kunai'){var cr=S.tu.carriles[i];if(cr.bestia)cr.bestia.v-=2;if(cr.def)cr.def.v-=2;log('La IA lanza 🗡️ <b>Tormenta de Kunai</b> en '+LANES[i].n+'.');revisarMuerte('tu',i,'bestia');revisarMuerte('tu',i,'def');}
+  else if(c.efecto==='devolver'){var cr=S.tu.carriles[i];if(cr.bestia){S.tu.mano.push(cr.bestia.id);log('La IA devuelve una de tus cartas a tu mano.');cr.bestia=null;}else if(cr.def){S.tu.mano.push(cr.def.id);cr.def=null;}}
+  else if(c.efecto==='invocar'){var cr=S.ia.carriles[i];if(!cr.bestia){var pool=NOMBRES.filter(function(x){return CARTAS[x].r==='dia'&&CARTAS[x].c<=4;});var cid=pool[Math.floor(Math.random()*pool.length)];var cc=CARTAS[cid];cr.bestia={id:cid,a:cc.a,v:cc.v,maxv:cc.v,cruz:cc.cruz||0,peri:cc.peri?JSON.parse(JSON.stringify(cc.peri)):null,crece:0};log('La IA invoca 🌀 '+cc.n+'.');}}
+  S.ia.chakra-=c.c;var k=S.ia.mano.indexOf(id);if(k>=0)S.ia.mano.splice(k,1);
 }
 function checkFin(){
   render();
-  if(S.ia.hp<=0){ finJuego(true); return true; }
-  if(S.tu.hp<=0){ finJuego(false); return true; }
+  if(S.ia.hp<=0){finJuego(true);return true;}
+  if(S.tu.hp<=0){finJuego(false);return true;}
   return false;
 }
 function finJuego(gano){
-  var m=document.getElementById('modal');
-  m.innerHTML='<div class="modal"><div class="mbox"><div class="big">'+(gano?'🏆':'🐉')+'</div>'
-    +'<h2>'+(gano?'¡VICTORIA!':'Derrota')+'</h2>'
-    +'<div class="small" style="margin:10px 0">'+(gano?'Venciste a la IA del dragón. Cuando llegue la fase 2 podrás apostar WLD contra personas reales.':'El dragón ganó esta vez. ¡Inténtalo de nuevo!')+'</div>'
-    +'<button class="btn" onclick="nuevaPartida()">🔁 Revancha</button>'
-    +'<button class="btn sec" onclick="volverMenu()">← Menú</button></div></div>';
+  document.getElementById('modal').innerHTML='<div class="modal"><div class="mbox"><div class="big">'+(gano?'🏆':'🐉')+'</div>'
+   +'<h2 style="font-size:22px">'+(gano?'¡VICTORIA!':'Derrota')+'</h2>'
+   +'<div class="small" style="margin:10px 0">'+(gano?'Venciste a la IA del dragón. En la fase 2 podrás apostar WLD contra personas reales.':'El dragón ganó esta vez. ¡Revancha!')+'</div>'
+   +'<button class="btn" onclick="nuevaPartida()">🔁 Revancha</button>'
+   +'<button class="btn sec" onclick="volverMenu()">← Menú</button></div></div>';
 }
-function volverMenu(){ document.getElementById('modal').innerHTML=''; document.getElementById('game').style.display='none'; document.getElementById('menu').style.display='block'; S=null; }
-function anuncio(t){ var el=document.getElementById('anuncio'); el.textContent=t; el.style.opacity=1; setTimeout(function(){el.style.opacity=0;},1100); }
-function showOk(t,i){ document.getElementById('modal').innerHTML='<div class="modal" onclick="this.remove()"><div class="mbox"><div class="big">'+(i||'')+'</div><div style="margin:8px 0">'+t+'</div><button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Ok</button></div></div>'; }
+function volverMenu(){document.getElementById('modal').innerHTML='';document.getElementById('game').style.display='none';document.getElementById('menu').style.display='block';S=null;}
+function anuncio(t){var el=document.getElementById('anuncio');el.textContent=t;el.style.opacity=1;setTimeout(function(){el.style.opacity=0;},1000);}
+function showOk(t,i){document.getElementById('modal').innerHTML='<div class="modal" onclick="this.remove()"><div class="mbox" style="padding:16px"><div style="font-size:38px">'+(i||'')+'</div><div style="margin:8px 0;font-size:14px">'+t+'</div><button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Ok</button></div></div>';}
 
 // ================== RENDER ==================
+function iconosPoder(c){
+  var s='';
+  if(c.cruz)s+='<span title="ataque cruzado">↗️⚔️</span>';
+  if(c.peri)s+='<span title="perímetro">🛡️⚠️</span>';
+  if(c.aura)s+='<span title="aura">✨</span>';
+  if(c.crece)s+='<span title="crece">📈</span>';
+  if(c.directo)s+='<span title="golpe directo">🎯</span>';
+  if(c.taunt)s+='<span title="muralla">🛡️</span>';
+  if(c.roba)s+='<span title="roba">🃏</span>';
+  if(c.entraDano)s+='<span title="daño al entrar">🌑</span>';
+  if(c.sella)s+='<span title="sella">📜</span>';
+  if(c.enjefe)s+='<span title="jefe">👑</span>';
+  if(c.ady)s+='<span title="sinergia">⚡</span>';
+  return s||'<span style="opacity:.3">·</span>';
+}
 function tile(o,lado){
-  if(!o) return '<div class="slot">—</div>';
+  if(!o)return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><span style="opacity:.25;font-size:18px">➕</span></div>';
   var c=CARTAS[o.id];
-  return '<div class="tile '+c.r+'">'+c.n+'<br><span style="font-weight:400">⚔️'+o.a+' ❤️'+o.v+'</span></div>';
+  return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><div class="u">'
+    +(c.aura?'<div class="aura">'+c.e+'</div>':'')
+    +'<div class="spr">'+c.art+'</div>'
+    +'<div class="nm">'+c.n+'</div>'
+    +'<div class="st"><span class="a">⚔️'+o.a+'</span> <span class="v">❤️'+o.v+'</span></div>'
+    +'<div class="badges">'+iconosPoder(c)+'</div></div></div>';
 }
 function render(sel){
-  if(!S) return;
-  document.getElementById('turnoN').textContent='Turno '+S.turno+' · '+(S.activo==='tu'?'tu turno':'turno de la IA');
+  if(!S)return;
+  document.getElementById('turnoN').textContent='Turno '+S.turno+' · '+(S.activo==='tu'?'tu turno':'IA...');
   document.getElementById('iaHpTxt').textContent='❤️ '+Math.max(0,S.ia.hp);
   document.getElementById('iaHpBar').style.width=Math.max(0,S.ia.hp/MAX_HP*100)+'%';
   document.getElementById('iaChakra').textContent='🌀 '+S.ia.chakra;
   document.getElementById('tuHpTxt').textContent='❤️ '+Math.max(0,S.tu.hp);
   document.getElementById('tuHpBar').style.width=Math.max(0,S.tu.hp/MAX_HP*100)+'%';
   document.getElementById('tuChakra').textContent='🌀 '+S.tu.chakra;
-  document.getElementById('tuMano').textContent='🃏 '+S.tu.mano.length+' · mazo '+S.tu.mazo.length;
-  // carriles
   var html='';
   for(var i=0;i<4;i++){
-    var iaCr=S.ia.carriles[i], tuCr=S.tu.carriles[i];
-    html+='<div class="lane'+(sel&&selCarta!=null?' sel':'')+'" onclick="tocarCarril('+i+')">'
-      +'<div class="tag">'+LANES[i]+(tuCr.escudo>0?' 🛡️'+tuCr.escudo:'')+'</div>'
-      +'<div class="slotrow"><div class="slot">'+tile(iaCr.bestia,'ia')+'</div><div class="slot">'+tile(iaCr.def,'ia')+'</div></div>'
+    var iaCr=S.ia.carriles[i],tuCr=S.tu.carriles[i];
+    html+='<div class="lane '+LANES[i].cls+(sel&&selCarta!=null?' sel':'')+'" onclick="tocarCarril('+i+')">'
+      +'<div class="terr"></div>'
+      +'<div class="tag">'+LANES[i].n+(tuCr.escudo>0?' 🛡️'+tuCr.escudo:'')+'</div>'
+      +'<div class="slotrow">'+tile(iaCr.bestia,'ia')+tile(iaCr.def,'ia')+'</div>'
       +'<div style="height:4px"></div>'
-      +'<div class="slotrow"><div class="slot">'+tile(tuCr.bestia,'tu')+'</div><div class="slot">'+tile(tuCr.def,'tu')+'</div></div>'
+      +'<div class="slotrow">'+tile(tuCr.bestia,'tu')+tile(tuCr.def,'tu')+'</div>'
       +'</div>';
   }
   document.getElementById('lanes').innerHTML=html;
-  // mano
   var mh='';
   S.tu.mano.forEach(function(id,i){
     var c=CARTAS[id];
-    var cls='hcard '+c.r+(S.tu.chakra<c.c?' no':'')+(sel&&selCarta===i?' sel':'');
-    mh+='<div class="'+cls+'" onclick="tocarCarta('+i+')"><span class="costo">'+c.c+'</span><b>'+c.n+'</b>'
-      +(c.r==='tec'?'<span style="font-weight:400">'+c.h+'</span>':'⚔️'+c.a+' ❤️'+c.v+'<br><span style="font-weight:400;font-size:10px">'+(c.h||c.t)+'<br>'+c.t+'</span>')
+    var cls='hcard r'+c.r+(S.tu.chakra<c.c?' no':'')+(sel&&selCarta===i?' sel':'');
+    mh+='<div class="'+cls+'" onclick="tocarCarta('+i+')">'
+      +'<div class="costo">'+c.c+'</div>'
+      +'<div class="art">'+c.art+'</div>'
+      +'<div class="nmm">'+c.n+'</div>'
+      +(c.r==='tec'?'<div class="picons">'+c.art+c.e+'</div>':'<div class="gema"><span class="a">⚔️'+c.a+'</span><span class="v">❤️'+c.v+'</span></div>')
+      +'<div class="picons">'+iconosPoder(c)+'</div>'
       +'</div>';
   });
   document.getElementById('mano').innerHTML=mh;
-  document.getElementById('btnTurno').disabled = S.activo!=='tu';
-  document.getElementById('btnTurno').style.opacity = S.activo==='tu'?1:.5;
-  document.getElementById('btnTurno').textContent = S.activo==='tu'?'⚔️ Batalla y pasar turno':'🐉 pensando...';
+  var b=document.getElementById('btnTurno');
+  b.disabled=S.activo!=='tu'; b.style.opacity=S.activo==='tu'?1:.5;
+  b.textContent=S.activo==='tu'?'⚔️ ¡BATALLA!':'🐉 pensando...';
 }
 
-// ================== MODALES ==================
+// ================== GALERIA Y REGLAS ==================
 function verCartas(){
   var g={dia:'',oro:'',plata:'',tec:''};
-  NOMBRES.forEach(function(id){ var c=CARTAS[id];
-    g[c.r]+='<div class="tile '+c.r+'" style="margin:6px 0"><span class="costo">'+c.c+'</span><b>'+c.n+'</b> '+(c.r==='tec'?'':'⚔️'+c.a+' ❤️'+c.v)+'<br><span style="font-weight:400">'+c.h+'</span></div>';
+  NOMBRES.forEach(function(id){var c=CARTAS[id];
+    g[c.r]+='<div class="hcard r'+c.r+'"><div class="costo">'+c.c+'</div><div class="art">'+c.art+'</div><div class="nmm">'+c.n+'</div>'
+      +(c.r==='tec'?'':'<div class="gema"><span class="a">⚔️'+c.a+'</span><span class="v">❤️'+c.v+'</span></div>')
+      +'<div class="picons">'+iconosPoder(c)+'</div><div class="small" style="font-size:9px;padding:4px 5px;line-height:1.4">'+c.h+'</div></div>';
   });
-  var t={dia:'💎 Bestias con Colas (Diamante)',oro:'🏅 Maestros Kage (Oro)',plata:'⚪ Ninjas del Clan (Plata)',tec:'🌀 Técnicas'};
-  var html='<div class="modal" onclick="if(event.target===this)this.remove()"><div class="mbox"><b>🃏 Las 24 cartas</b>';
-  ['dia','oro','plata','tec'].forEach(function(r){ html+='<div class="small" style="margin-top:12px;font-weight:800;color:#eaecef">'+t[r]+'</div>'+g[r]; });
+  var t={dia:'💎 BESTIAS CON COLAS (Diamante)',oro:'🏅 MAESTROS KAGE (Oro)',plata:'⚪ NINJAS DEL CLAN (Plata)',tec:'🌀 TÉCNICAS'};
+  var html='<div class="modal" onclick="if(event.target===this)this.remove()"><div class="mbox"><div style="font-size:20px;font-weight:900">🃏 Las 24 cartas</div>';
+  ['dia','oro','plata','tec'].forEach(function(r){html+='<div class="titg">'+t[r]+'</div><div class="gal">'+g[r]+'</div>';});
   html+='<button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Cerrar</button></div></div>';
   document.getElementById('modal').innerHTML=html;
 }
 function verReglas(){
-  document.getElementById('modal').innerHTML='<div class="modal" onclick="if(event.target===this)this.remove()"><div class="mbox" style="text-align:left"><b>📜 Reglas</b>'
-   +'<div class="small" style="margin-top:10px;line-height:1.8">'
-   +'• Cada jugador tiene 25 de vida y un mazo de 20 cartas (se juega con las 24 al azar).<br>'
-   +'• Por turno ganas 1 🌀 Chakra y robas 1 carta. Las cartas cuestan Chakra.<br>'
-   +'• 4 territorios (carriles). En cada uno puedes tener 1 bestia y 1 defensor.<br>'
-   +'• <b>⚔️ Batalla:</b> tus bestias atacan de frente a su carril. Si el carril rival está vacío, golpean la vida directo.<br>'
-   +'• <b>↗ Ataque cruzado:</b> algunas bestias dañan también los carriles vecinos.<br>'
-   +'• <b>⚠️ Perímetro:</b> cuando el rival juega una carta en un carril vecino a tu bestia con perímetro, esta se activa sola (daña o escuda).<br>'
-   +'• 🏅 Las auras de los Kage potencian la bestia de su carril.<br>'
-   +'• Gana quien deje la vida rival en 0.<br>'
-   +'• Fase 2 (próximamente): retos contra otras personas con pozo en WLD, mín 1 WLD, máx $10.</div>'
+  document.getElementById('modal').innerHTML='<div class="modal" onclick="if(event.target===this)this.remove()"><div class="mbox" style="text-align:left"><b style="font-size:18px">📜 Reglas</b>'
+   +'<div class="small" style="margin-top:10px;line-height:1.9">'
+   +'• Vida 25 cada uno. Por turno: +1 🌀 Chakra y robas 1 carta.<br>'
+   +'• 4 territorios. En cada uno: 1 bestia + 1 defensor.<br>'
+   +'• <b>⚔️ BATALLA</b>: tus bestias atacan de frente; carril rival vacío = golpe directo a la vida.<br>'
+   +'• <b>↗️⚔️ Ataque cruzado</b>: la bestia lanza su elemento a los carriles vecinos.<br>'
+   +'• <b>🛡️⚠️ Perímetro</b>: si el rival juega carta junto a tu bestia con perímetro, esta se activa sola (daña o escuda).<br>'
+   +'• <b>✨ Auras</b>: el Kage defensor potencia la bestia de su carril.<br>'
+   +'• Gana quien deje la vida rival en 0. Fase 2: retos PvP con pozo en WLD.</div>'
    +'<button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Cerrar</button></div></div>';
 }
 </script>
