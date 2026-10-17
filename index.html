@@ -691,30 +691,93 @@ function init3D(){
   }
   cancelAnimationFrame(R3.raf); t3d=0; loop3D();
 }
+// configuracion de cada bestia: cuerpo, panza, iris, pupila
+var B3={
+ b1:{c:0xd97b29,p:0x8a4a10,i:0x9b30d9,u:0xffd44d}, b2:{c:0x9a9ab4,p:0x3a3a52,i:0x9b30d9,u:0xffd44d},
+ b3:{c:0x2fae64,p:0x0a4d2a,i:0x9b30d9,u:0xffd44d}, b4:{c:0x3fbf6f,p:0x14521e,i:0x9b30d9,u:0xffd44d},
+ b5:{c:0xe8e8ff,p:0x555577,i:0x9b30d9,u:0xffd44d}, b6:{c:0x7a8ab0,p:0x2a3a5e,i:0x9b30d9,u:0xffd44d},
+ b7:{c:0xff7a2a,p:0x4d1400,i:0x9b30d9,u:0xffd44d}, b8:{c:0xa8d8ff,p:0x1a4a7e,i:0x9b30d9,u:0xffd44d},
+ b9:{c:0xd42a1e,p:0x5e0a04,i:0x9b30d9,u:0xffd44d}
+};
 function mkBeast(c,o){
-  var g=new THREE.Group(); var col=colRar(c.r);
-  var mat=new THREE.MeshStandardMaterial({color:col,roughness:.5,emissive:col,emissiveIntensity:.18});
-  var oscuro=new THREE.MeshStandardMaterial({color:0x14161e,roughness:.7});
-  var cuerpo=new THREE.Mesh(new THREE.SphereGeometry(.62,14,10),mat);
-  cuerpo.scale.set(1.5,1,1); cuerpo.position.y=.62; cuerpo.castShadow=true; g.add(cuerpo);
-  var cabeza=new THREE.Mesh(new THREE.SphereGeometry(.4,12,10),mat);
-  cabeza.position.set(1.05,.95,0); cabeza.castShadow=true; g.add(cabeza);
-  g.add(ojo(-1)); var oj2=ojo(1); oj2.position.x=1.28; oj2.position.y=1.02; oj2.position.z=.16;
-  oj2.position.set(1.28,1.02,.16); g.add(oj2);
-  function ojo(){var e=new THREE.Mesh(new THREE.SphereGeometry(.07,8,8),new THREE.MeshBasicMaterial({color:0xff2222}));e.position.set(1.28,1.02,-.16);return e;}
-  for(var p=0;p<4;p++){
-    var pata=new THREE.Mesh(new THREE.CylinderGeometry(.09,.12,.6,8),oscuro);
-    pata.position.set((p<2?.5:-.5)*.9+.25,.3,(p%2?-.35:.35)); pata.castShadow=true; g.add(pata);
+  var g=new THREE.Group();
+  var cfg=B3[c.id]||B3.b1;
+  var esDragon=(c.id==='b9'||c.id==='b8'||c.id==='b5');
+  var piel=new THREE.MeshStandardMaterial({color:cfg.c,roughness:.55,emissive:cfg.c,emissiveIntensity:.16});
+  var panza=new THREE.MeshStandardMaterial({color:cfg.p,roughness:.7});
+  var negro=new THREE.MeshStandardMaterial({color:0x0c0c10,roughness:.5});
+  // torso y pecho
+  var pecho=new THREE.Mesh(new THREE.SphereGeometry(.6,16,12),piel);
+  pecho.scale.set(1.35,1.05,1.05); pecho.position.y=.85; pecho.castShadow=true; g.add(pecho);
+  g.userData.pecho=pecho;
+  var vientre=new THREE.Mesh(new THREE.SphereGeometry(.45,12,10),panza);
+  vientre.scale.set(1.2,.7,.8); vientre.position.set(.1,.62,.42); g.add(vientre);
+  // cuello + cabeza con hocico
+  var cuello=new THREE.Mesh(new THREE.CylinderGeometry(.18,.3,.75,10),piel);
+  cuello.position.set(.85,1.15,0); cuello.rotation.z=-.5; cuello.castShadow=true; g.add(cuello);
+  var cabeza=new THREE.Mesh(new THREE.SphereGeometry(.34,14,12),piel);
+  cabeza.position.set(1.25,1.5,0); cabeza.castShadow=true; g.add(cabeza);
+  var hocico=new THREE.Mesh(new THREE.BoxGeometry(.5,.22,.3),piel);
+  hocico.position.set(1.62,1.44,0); hocico.castShadow=true; g.add(hocico);
+  var mandib=new THREE.Mesh(new THREE.BoxGeometry(.42,.1,.26),panza);
+  mandib.position.set(1.55,1.32,0); g.add(mandib); g.userData.mandib=mandib;
+  // OJOS: esclerótica dorada + iris morado + pupila dorada al centro (pedido de Juan)
+  [-1,1].forEach(function(s){
+    var ojo=new THREE.Mesh(new THREE.SphereGeometry(.1,10,10),new THREE.MeshBasicMaterial({color:0xffe9b0}));
+    ojo.position.set(1.32,1.56,.17*s); g.add(ojo);
+    var iris=new THREE.Mesh(new THREE.SphereGeometry(.068,10,10),new THREE.MeshBasicMaterial({color:0x9b30d9}));
+    iris.position.set(1.41,1.56,.185*s); g.add(iris);
+    var pup=new THREE.Mesh(new THREE.SphereGeometry(.032,8,8),new THREE.MeshBasicMaterial({color:0xffd44d}));
+    pup.position.set(1.45,1.56,.195*s); g.add(pup);
+  });
+  // CUERNO NEGRO (unico, centrado) + orejas
+  var cuerno=new THREE.Mesh(new THREE.ConeGeometry(.09,.55,8),negro);
+  cuerno.position.set(1.2,1.92,0); cuerno.rotation.z=-.35; cuerno.castShadow=true; g.add(cuerno);
+  [-1,1].forEach(function(s){
+    var oreja=new THREE.Mesh(new THREE.ConeGeometry(.08,.22,6),piel);
+    oreja.position.set(1.1,1.83,.16*s); oreja.rotation.z=-.4; g.add(oreja);
+  });
+  // ALAS (dragon y bestias grandes): baten solas
+  g.userData.alas=[];
+  if(esDragon){
+    [-1,1].forEach(function(s){
+      var ala=new THREE.Group(); ala.position.set(-.1,1.25,.45*s);
+      var membrana=new THREE.Mesh(new THREE.ConeGeometry(.55,1.5,4),new THREE.MeshStandardMaterial({color:cfg.p,roughness:.6,transparent:true,opacity:.92,side:THREE.DoubleSide}));
+      membrana.scale.set(.16,1,1); membrana.rotation.z=-1.35; membrana.castShadow=true;
+      ala.add(membrana);
+      var hueso=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,1.45,6),negro);
+      hueso.rotation.z=-1.35; hueso.position.y=.2; ala.add(hueso);
+      g.add(ala); g.userData.alas.push(ala);
+    });
   }
-  var colas=(c.colas||1);
-  g.userData.colas=[];
+  // espinas dorsales
+  for(var e=0;e<4;e++){
+    var espina=new THREE.Mesh(new THREE.ConeGeometry(.06,.2,6),negro);
+    espina.position.set(.5-e*.42,1.28+Math.sin(e)*.06,0); espina.rotation.z=.3; g.add(espina);
+  }
+  // patas con articulacion
+  [[.45,.55],[-.5,.55],[.45,-.55],[-.5,-.55]].forEach(function(pp){
+    var sup=new THREE.Mesh(new THREE.CylinderGeometry(.11,.1,.42,8),piel);
+    sup.position.set(pp[0],.62,pp[1]); g.add(sup);
+    var inf=new THREE.Mesh(new THREE.CylinderGeometry(.08,.13,.5,8),piel);
+    inf.position.set(pp[0]+.05,.28,pp[1]); inf.castShadow=true; g.add(inf);
+    var pie=new THREE.Mesh(new THREE.BoxGeometry(.24,.09,.16),negro);
+    pie.position.set(pp[0]+.18,.06,pp[1]); g.add(pie);
+  });
+  // COLAS (tantas como colas tenga la bestia), cada una con 3 segmentos
+  var colas=(c.colas||1); g.userData.colas=[];
   for(var t=0;t<colas;t++){
-    var cola=new THREE.Mesh(new THREE.ConeGeometry(.11,1.5,8),mat);
-    cola.position.set(-1.05,.85,(t-(colas-1)/2)*.22);
-    cola.rotation.z=1.25; cola.castShadow=true; g.userData.colas.push(cola); g.add(cola);
+    var raiz=new THREE.Group();
+    raiz.position.set(-.78,.85,(t-(colas-1)/2)*.14);
+    var prev=raiz;
+    for(var sgm=0;sgm<3;sgm++){
+      var seg=new THREE.Mesh(new THREE.ConeGeometry(.14-sgm*.035,.55-sgm*.1,8),piel);
+      seg.rotation.z=1.35; seg.position.x=-.32; seg.castShadow=true;
+      if(sgm===2){seg.material=new THREE.MeshStandardMaterial({color:0xffd44d,emissive:0xffd44d,emissiveIntensity:.25});}
+      prev.add(seg); prev=seg;
+    }
+    g.add(raiz); g.userData.colas.push(raiz);
   }
-  if(c.r==='dia'){var corona=new THREE.Mesh(new THREE.TorusGeometry(.5,.05,8,24),new THREE.MeshBasicMaterial({color:0xffd44d}));
-    corona.position.set(1.05,1.45,0); corona.rotation.x=.5; g.add(corona);}
   return g;
 }
 function mkNinja(c,o){
@@ -762,9 +825,14 @@ function loop3D(){
     var u=R3.U[k], g=u.g, d=u.anim;
     if(g.userData.colas)for(var q=0;q<g.userData.colas.length;q++){
       var cola=g.userData.colas[q];
-      cola.rotation.z=1.25+Math.sin(t3d*2.2+q*.9)*.16;
-      cola.rotation.x=Math.sin(t3d*1.7+q)*.12;
+      cola.rotation.y=Math.sin(t3d*2.2+q*.9)*.3;
+      cola.rotation.z=Math.sin(t3d*1.6+q*.5)*.14;
     }
+    if(g.userData.alas)for(var a=0;a<g.userData.alas.length;a++){
+      g.userData.alas[a].rotation.x=Math.sin(t3d*3.1+a*3.14)*.4-.1;
+    }
+    if(g.userData.pecho){var br=1.05+Math.sin(t3d*2.1)*.05;g.userData.pecho.scale.set(1.35*br,1.05*br,1.05*br);}
+    if(g.userData.mandib)g.userData.mandib.rotation.x=Math.sin(t3d*1.3+u.sem)*.06;
     g.position.y=.55+Math.sin(t3d*2.1+u.sem)*.05;
     if(g.userData.anillo)g.userData.anillo.rotation.z+=.02;
     var p=0;
