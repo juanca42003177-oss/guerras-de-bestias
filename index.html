@@ -19,10 +19,21 @@ body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 
 .hpfill{height:100%;background:linear-gradient(90deg,#ff4040,#ffb340);border-radius:5px;transition:width .5s}
 .hpfill.ia{background:linear-gradient(90deg,#a030ff,#40c8ff)}
 #board{position:relative}
-.lane{border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:5px;margin:7px 0;position:relative;cursor:pointer;transition:transform .15s,border-color .15s}
+.lane{border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:4px;margin:5px 0;position:relative;cursor:pointer;transition:transform .15s,border-color .15s}
 .lane.sel{border-color:var(--gold)}
 .lane:active{transform:scale(.985)}
-.lane .tag{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:3px;font-weight:800;opacity:.85}
+.lane .tag{font-size:8.5px;letter-spacing:1.2px;text-transform:uppercase;text-align:center;margin-bottom:2px;font-weight:800;opacity:.85}
+.pbar{display:flex;align-items:center;gap:7px;padding:7px 10px}
+.flex1{flex:1;margin:0}
+#dock{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:linear-gradient(180deg,rgba(11,14,19,.92),#0b0e13);border-top:1px solid var(--border);padding:5px 8px 10px;z-index:40;backdrop-filter:blur(4px)}
+#dock .handrow{display:flex;gap:7px;align-items:stretch}
+#dock .hand{flex:1;padding:0}
+#dock #btnTurno{width:64px;margin:0;font-size:24px;border-radius:12px;background:linear-gradient(180deg,#ffd44d,#f0b90b);border:0;box-shadow:0 3px 0 #9c7c00;font-weight:900;cursor:pointer;color:#111}
+#ticker{font-size:10.5px;color:#ffd44d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 4px 5px;min-height:18px}
+.u .ground{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:40px;height:11px;background:radial-gradient(ellipse at center,rgba(0,0,0,.6),transparent 70%);z-index:0}
+.u .frame{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:50px;height:50px;border-radius:50%;border:2.5px solid;z-index:0;background:#0d1219}
+.u{padding-bottom:4px}
+#game .box{margin:5px 7px}.lane .tag{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:3px;font-weight:800;opacity:.85}
 .lane .terr{position:absolute;inset:0;border-radius:12px;opacity:.16;z-index:0}
 .lane>*{position:relative;z-index:1}
 .lVolcan .terr{background:linear-gradient(180deg,#ff5a2b,#7a1500)}
@@ -30,12 +41,12 @@ body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 
 .lLago .terr{background:linear-gradient(180deg,#2bb8ff,#00305e)}
 .lCima .terr{background:linear-gradient(180deg,#b8c8ff,#3d2b8f)}
 .slotrow{display:flex;gap:4px}
-.slot{flex:1;min-height:58px;border:1px dashed rgba(255,255,255,.14);border-radius:9px;display:flex;align-items:center;justify-content:center;padding:2px;transition:background .2s}
+.slot{flex:1;min-height:50px;border:1px dashed rgba(255,255,255,.14);border-radius:9px;display:flex;align-items:center;justify-content:center;padding:2px;transition:background .2s}
 .slot.hitflash{animation:hit .5s}
 @keyframes hit{0%{background:rgba(255,60,60,.55)}100%{background:transparent}}
 .slot.iamy{background:rgba(64,200,255,.05)}
 .u{width:100%;text-align:center;position:relative}
-.u .halo{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;filter:blur(7px);opacity:.55;z-index:-1}
+.u .halo{position:absolute;top:4px;left:50%;transform:translateX(-50%);width:44px;height:44px;border-radius:50%;filter:blur(7px);opacity:.55;z-index:-1}
 .u .spr{font-size:40px;display:inline-block;animation:floaty 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6)) drop-shadow(0 0 7px currentColor)}
 .u .spr.atk{animation:lunge .45s ease}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
@@ -89,24 +100,32 @@ body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 
   </div>
 </div>
 
-<div id="game" style="display:none">
-  <div class="hdr" style="font-size:13px">⚔️ Guerras de Bestias <span class="small" id="turnoN">—</span></div>
-  <div class="box" style="padding:9px">
-    <div class="status"><span>🐉 Dragón IA <span class="small" id="iaChakra"></span></span><span id="iaHpTxt">❤️ 25</span></div>
-    <div class="hpbar"><div class="hpfill ia" id="iaHpBar" style="width:100%"></div></div>
+<div id="game" style="display:none;padding-bottom:118px">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 10px 2px;font-size:11px">
+    <span style="cursor:pointer;font-size:16px" onclick="if(confirm('¿Rendirse?'))nuevaPartida()">✕</span>
+    <span style="font-weight:900;color:var(--gold)">⚔️ Guerras de Bestias · <span id="turnoN" style="font-weight:600;color:var(--muted)">—</span></span>
+    <span class="small" id="tuMano"></span>
   </div>
-  <div class="box" style="padding:7px"><div id="board"><div id="lanes"></div></div></div>
-  <div class="box" style="padding:9px">
-    <div class="status"><span>Tú <span class="small" id="tuChakra"></span></span><span id="tuHpTxt">❤️ 25</span></div>
-    <div class="hpbar"><div class="hpfill" id="tuHpBar" style="width:100%"></div></div>
+  <div class="box pbar">
+    <span style="font-weight:800">🐉</span>
+    <span class="small" id="iaChakra"></span>
+    <div class="hpbar flex1"><div class="hpfill ia" id="iaHpBar" style="width:100%"></div></div>
+    <span class="small" id="iaHpTxt">❤️ 25</span>
   </div>
-  <div class="box" style="padding:8px">
-    <div class="small" style="font-weight:800;color:#eaecef">Tu mano <span class="small">(toca carta → toca carril)</span></div>
+  <div class="box" style="padding:5px"><div id="board"><div id="lanes"></div></div></div>
+  <div class="box pbar">
+    <span style="font-weight:800">🥷 Tú</span>
+    <span class="small" id="tuChakra"></span>
+    <div class="hpbar flex1"><div class="hpfill" id="tuHpBar" style="width:100%"></div></div>
+    <span class="small" id="tuHpTxt">❤️ 25</span>
+  </div>
+</div>
+<div id="dock" style="display:none">
+  <div id="ticker"></div>
+  <div class="handrow">
     <div class="hand" id="mano"></div>
-    <button class="btn" id="btnTurno" onclick="finTurnoJugador()">⚔️ ¡BATALLA!</button>
+    <button id="btnTurno" onclick="finTurnoJugador()">⚔️</button>
   </div>
-  <div class="box"><div id="log"></div></div>
-  <button class="btn sec" style="margin:0 9px;width:calc(100% - 18px)" onclick="if(confirm('¿Rendirse?'))nuevaPartida()">← Salir de la partida</button>
 </div>
 <div class="turno" id="anuncio"></div>
 <div id="modal"></div>
@@ -150,6 +169,7 @@ function mezclar(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()
 function nuevaPartida(){
   document.getElementById('menu').style.display='none';
   document.getElementById('game').style.display='block';
+  document.getElementById('dock').style.display='block';
   document.getElementById('modal').innerHTML='';
   S={turno:1,activo:'tu',tu:hacerLado(),ia:hacerLado()};
   for(var i=0;i<4;i++){robar('tu',true);robar('ia',true);}
@@ -164,7 +184,7 @@ function robar(lado,silencio){
   if(L.mano.length>=6){L.mazo.pop();return;}
   L.mano.push(L.mazo.pop());
 }
-function log(t){var el=document.getElementById('log');if(!el)return;el.innerHTML+='<div>• '+t+'</div>';el.scrollTop=el.scrollHeight;}
+function log(t){var k=document.getElementById('ticker');if(k){k.innerHTML='• '+t;}}
 
 // ================== MOTOR DE SONIDO (sintetizado, sin archivos) ==================
 var AC=null;
@@ -520,7 +540,7 @@ function finJuego(gano){
    +'<button class="btn" onclick="nuevaPartida()">🔁 Revancha</button>'
    +'<button class="btn sec" onclick="volverMenu()">← Menú</button></div></div>';
 }
-function volverMenu(){document.getElementById('modal').innerHTML='';document.getElementById('game').style.display='none';document.getElementById('menu').style.display='block';S=null;}
+function volverMenu(){document.getElementById('modal').innerHTML='';document.getElementById('game').style.display='none';document.getElementById('dock').style.display='none';document.getElementById('menu').style.display='block';S=null;}
 function anuncio(t){var el=document.getElementById('anuncio');el.textContent=t;el.style.opacity=1;setTimeout(function(){el.style.opacity=0;},1000);}
 function showOk(t,i){document.getElementById('modal').innerHTML='<div class="modal" onclick="this.remove()"><div class="mbox" style="padding:16px"><div style="font-size:38px">'+(i||'')+'</div><div style="margin:8px 0;font-size:14px">'+t+'</div><button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Ok</button></div></div>';}
 
@@ -543,8 +563,10 @@ function iconosPoder(c){
 function tile(o,lado){
   if(!o)return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><span style="opacity:.25;font-size:18px">➕</span></div>';
   var c=CARTAS[o.id];
-  var haloC=c.r==='dia'?'#4fd1f5':(c.r==='oro'?'#f0b90b':'#93a3b8');
+  var haloC=c.r==='dia'?'#4fd1f5':(c.r==='oro'?'#f0b90b':(c.r==='tec'?'#b06bff':'#93a3b8'));
   return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><div class="u">'
+    +'<div class="ground"></div>'
+    +'<div class="frame" style="border-color:'+haloC+'"></div>'
     +'<div class="halo" style="background:'+haloC+';color:'+haloC+'"></div>'
     +(c.aura?'<div class="aura">'+c.e+'</div>':'')
     +'<div class="spr">'+c.art+'</div>'
@@ -573,6 +595,7 @@ function render(sel){
       +'</div>';
   }
   document.getElementById('lanes').innerHTML=html;
+  document.getElementById('tuMano').textContent='🃏 '+S.tu.mano.length+' · mazo '+S.tu.mazo.length;
   var mh='';
   S.tu.mano.forEach(function(id,i){
     var c=CARTAS[id];
