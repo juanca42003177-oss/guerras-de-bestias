@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⚔️ Guerras de Bestias</title>
+<style>
+  :root{--bg:#0e1116;--card:#161c24;--border:#232b36;--gold:#f0b90b;--muted:#8b96a5;--dia:#7ee0ff;--plata:#c9d4e0}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{background:var(--bg);color:#eaecef;font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;min-height:100vh}
+  .hdr{text-align:center;padding:12px;font-weight:900;color:var(--gold)}
+  .box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin:10px}
+  .small{color:var(--muted);font-size:13px;line-height:1.5}
+  .lane{border:1px solid var(--border);border-radius:10px;padding:8px;margin:6px 0;min-height:64px;text-align:center}
+  .lane .tag{font-size:11px;color:var(--muted)}
+  .cardTile{border-radius:8px;padding:6px;margin:4px 0;font-size:12px;font-weight:700}
+  .dia{background:linear-gradient(135deg,#0e2b38,#123f52);border:1px solid #4fd1f5;color:#c8f4ff}
+  .oro{background:linear-gradient(135deg,#2b220e,#3f3412);border:1px solid #f0b90b;color:#ffe9a8}
+  .plata{background:#1c2530;border:1px solid #93a3b8;color:#e6eef6}
+  .btn{display:block;width:100%;padding:14px;border-radius:12px;border:0;background:var(--gold);color:#111;font-weight:900;margin-top:10px;cursor:pointer}
+  .btn.sec{background:var(--card);color:#eaecef;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+  <div class="hdr">⚔️ Guerras de Bestias</div>
+  <div class="box">
+    <div class="small">Juego de cartas original de Dragon Trade Labs. Bestias con colas (Diamante), Maestros Kage (Oro) y Ninjas del Clan (Plata) pelean por 4 territorios. En construcción: fase 1.</div>
+    <button class="btn" onclick="alert('Fase 1 en desarrollo: tablero y modo práctica contra la IA del dragón llegan en el próximo avance.')">♟️ Modo práctica (en camino)</button>
+    <button class="btn sec" onclick="location.href='DISENO.md'">📜 Ver reglas y las 24 cartas</button>
+  </div>
+  <div class="box">
+    <div class="small" style="font-weight:800;color:#eaecef">Tablero (vista previa)</div>
+    <div id="lanes"></div>
+  </div>
+<script>
+var LANES=['Territorio del Volcán','Territorio del Bosque','Territorio del Lago','Territorio de la Cima'];
+document.getElementById('lanes').innerHTML = LANES.map(function(l){
+  return '<div class="lane"><div class="tag">'+l+'</div><div class="small">ranura de bestia + defensor</div></div>';
+}).join('');
+</script>
+</body>
+</html>
