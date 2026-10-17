@@ -30,7 +30,18 @@ body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 
 #dock .hand{flex:1;padding:0}
 #dock #btnTurno{width:64px;margin:0;font-size:24px;border-radius:12px;background:linear-gradient(180deg,#ffd44d,#f0b90b);border:0;box-shadow:0 3px 0 #9c7c00;font-weight:900;cursor:pointer;color:#111}
 #ticker{font-size:10.5px;color:#ffd44d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 4px 5px;min-height:18px}
-.u .ground{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:40px;height:11px;background:radial-gradient(ellipse at center,rgba(0,0,0,.6),transparent 70%);z-index:0}
+svg.char{width:46px;height:46px;overflow:visible}
+.hcard .art svg.char{width:40px;height:40px}
+.tail{transform-origin:32px 42px;animation:sway 2.6s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(9deg)}}
+.breath{transform-origin:32px 50px;animation:brth 2.4s ease-in-out infinite}
+@keyframes brth{50%{transform:scaleY(.965)}}
+.eyes{animation:eyeg 2s ease-in-out infinite}
+@keyframes eyeg{50%{opacity:.45}}
+.spr.guard{animation:guardup .45s ease-out}
+@keyframes guardup{0%{transform:translateY(0)}45%{transform:translateY(7px) scale(.93);filter:brightness(1.4)}100%{transform:translateY(0)}}
+.spr.stepf{animation:stepf .5s ease-out}
+@keyframes stepf{40%{transform:translateX(-10px)}.u .ground{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:40px;height:11px;background:radial-gradient(ellipse at center,rgba(0,0,0,.6),transparent 70%);z-index:0}
 .u .frame{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:50px;height:50px;border-radius:50%;border:2.5px solid;z-index:0;background:#0d1219}
 .u{padding-bottom:4px}
 #game .box{margin:5px 7px}.lane .tag{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:3px;font-weight:800;opacity:.85}
@@ -261,7 +272,9 @@ function impacto(lado,i,tipo){
   var el=document.querySelectorAll('#lanes .lane')[i];
   if(el){var row=el.querySelectorAll('.slotrow')[lado==='ia'?0:1];
     var slot=row.querySelectorAll('.slot')[tipo==='bestia'?0:1];
-    if(slot){slot.classList.remove('hitflash');void slot.offsetWidth;slot.classList.add('hitflash');}}
+    if(slot){slot.classList.remove('hitflash');void slot.offsetWidth;slot.classList.add('hitflash');
+      var spr=slot.querySelector('.spr');
+      if(spr&&tipo==='def'){spr.classList.remove('guard');void spr.offsetWidth;spr.classList.add('guard');}}}
 }
 function animAtk(lado,i){
   var el=document.querySelectorAll('#lanes .lane')[i];
@@ -269,7 +282,8 @@ function animAtk(lado,i){
   var row=el.querySelectorAll('.slotrow')[lado==='ia'?0:1];
   var slot=row.querySelectorAll('.slot')[0];
   var spr=slot?slot.querySelector('.spr'):null;
-  if(spr){spr.classList.remove('atk');void spr.offsetWidth;spr.classList.add('atk');}
+  if(spr){spr.classList.remove('atk');void spr.offsetWidth;spr.classList.add('atk');
+    spr.classList.remove('stepf');void spr.offsetWidth;spr.classList.add('stepf');}
   SND.whoosh();
 }
 
@@ -544,6 +558,99 @@ function volverMenu(){document.getElementById('modal').innerHTML='';document.get
 function anuncio(t){var el=document.getElementById('anuncio');el.textContent=t;el.style.opacity=1;setTimeout(function(){el.style.opacity=0;},1000);}
 function showOk(t,i){document.getElementById('modal').innerHTML='<div class="modal" onclick="this.remove()"><div class="mbox" style="padding:16px"><div style="font-size:38px">'+(i||'')+'</div><div style="margin:8px 0;font-size:14px">'+t+'</div><button class="btn" onclick="document.getElementById(\'modal\').innerHTML=\'\'">Ok</button></div></div>';}
 
+
+// ================== PERSONAJES SVG (dibujados, con movimiento) ==================
+var BODY={
+ b1:['#ffb066','#5e2a00','canine'],b2:['#c8c8dc','#3a3a52','canine'],b3:['#5fd58a','#0a4d2a','serpent'],
+ b4:['#63d98f','#14521e','monkey'],b5:['#e8e8ff','#3d3d5e','equine'],b6:['#a8b8d8','#2a3a5e','badger'],
+ b7:['#ff8a3d','#4d1400','beetle'],b8:['#c8f4ff','#1a4a7e','canine'],b9:['#ffd44d','#200a00','dragon']
+};
+var WEPN={k1:['#40c8ff','staff'],k2:['#d8a860','wall'],k3:['#40c8ff','staff'],k4:['#ffd44d','bolt'],k5:['#a06bff','kunai'],k6:['#ffd44d','crown'],n1:['#8be9ff','scroll'],n2:['#8be9ff','bow'],n3:['#c9d4e0','wall'],n4:['#a06bff','kunai'],n5:['#40c8ff','sword'],n6:['#ff9d3c','scroll']};
+function gid(){ return 'g'+Math.random().toString(36).slice(2,8); }
+function svBeast(c){
+  var cfg=BODY[c.art==='x'?null:c.id]||BODY.b1;
+  var col1=cfg[0],col2=cfg[1],type=cfg[2],i=window.__uid=window.__uid||0;window.__uid++;
+  var g='bg'+window.__uid, tails='';
+  var nTails=({b1:1,b2:2,b3:3,b4:4,b5:5,b6:6,b7:7,b8:8,b9:9})[c.id]||1;
+  for(var t=0;t<nTails;t++){
+    var x=14+t*4.5;
+    tails+='<path class="tail" style="animation-delay:'+(t*0.22)+'s" d="M'+x+',40 C'+(x-6)+',28 '+(x+3)+',18 '+(x-9)+',10" stroke="url(#'+g+')" stroke-width="'+(3.2-(t*0.18))+'" fill="none" stroke-linecap="round"/>';
+  }
+  var body='';
+  if(type==='serpent'){
+    body='<path class="breath" d="M8,52 C14,40 10,30 20,26 C30,22 28,34 38,30 C48,26 46,38 54,36 L54,44 C44,46 46,54 36,54 C26,54 22,60 12,58 Z" fill="url(#'+g+')" stroke="'+col2+'" stroke-width="1.6"/>'
+      +'<circle cx="52" cy="34" r="7" fill="url(#'+g+')" stroke="'+col2+'"/>'
+      +'<path d="M58,32 l7,-3" stroke="'+col1+'" stroke-width="1.6"/>';
+  } else if(type==='monkey'){
+    body='<ellipse class="breath" cx="30" cy="46" rx="15" ry="12" fill="url(#'+g+')" stroke="'+col2+'"/>'
+      +'<circle cx="45" cy="34" r="8" fill="url(#'+g+')" stroke="'+col2+'"/>'
+      +'<circle cx="45" cy="21" r="5.5" fill="url(#'+g+')" stroke="'+col2+'"/>'
+      +'<path d="M40,24 l-9,-6" stroke="'+col2+'" stroke-width="2.4" stroke-linecap="round"/>';
+  } else if(type==='equine'){
+    body='<path class="breath" d="M10,50 L18,36 L40,34 L50,40 L56,30 L58,44 L50,46 L48,54 L42,54 L44,46 L18,48 L16,54 L10,54 Z" fill="url(#'+g+')" stroke="'+col2+'" stroke-width="1.5"/>'
+      +'<path d="M40,34 l6,-12 l6,3 l-6,10" fill="url(#'+g+')"/>';
+  } else if(type==='beetle'){
+    body='<ellipse class="breath" cx="32" cy="44" rx="17" ry="13" fill="url(#'+g+')" stroke="'+col2+'" stroke-width="1.6"/>'
+      +'<path d="M32,31 L32,57" stroke="'+col2+'" stroke-width="2"/>'
+      +'<path d="M18,40 L8,36 M18,48 L8,52 M46,40 L56,36 M46,48 L56,52" stroke="'+col2+'" stroke-width="2.2"/>'
+      +'<circle cx="32" cy="27" r="6" fill="url(#'+g+')" stroke="'+col2+'"/>';
+  } else if(type==='dragon'){
+    body='<path class="breath" d="M8,54 C6,40 18,32 28,32 C34,32 34,26 42,24 C50,22 54,28 52,34 C56,36 56,42 50,44 C48,52 38,56 26,56 L12,56 Z" fill="url(#'+g+')" stroke="'+col2+'" stroke-width="1.8"/>'
+      +'<path d="M42,24 l8,-8 l2,6 l6,0 l-5,7" fill="'+col1+'" stroke="'+col2+'" stroke-width="1.2"/>'
+      +'<path d="M14,44 l6,-6 l-6,-5 z" fill="'+col1+'"/>';
+  } else { // canine / badger
+    body='<path class="breath" d="M10,52 L14,38 L28,32 L44,32 L52,40 L56,52 L48,54 L46,46 L20,46 L18,54 Z" fill="url(#'+g+')" stroke="'+col2+'" stroke-width="1.5"/>'
+      +'<circle cx="50" cy="28" r="9" fill="url(#'+g+')" stroke="'+col2+'"/>'
+      +'<path d="M44,21 l-3,-8 M56,21 l4,-8" stroke="'+col2+'" stroke-width="2.2" stroke-linecap="round"/>'
+      +'<path d="M58,30 l7,-2" stroke="'+col2+'" stroke-width="2"/>';
+  }
+  return '<svg class="char" viewBox="0 0 64 60"><defs><linearGradient id="'+g+'" x1="0" y1="0" x2="1" y2="1">'
+    +'<stop offset="0" stop-color="'+col1+'"/><stop offset="1" stop-color="'+col2+'"/></linearGradient></defs>'
+    +tails+body
+    +'<g class="eyes"><circle cx="'+(type==='serpent'||type==='dragon'?54:52)+'" cy="'+(type==='serpent'||type==='dragon'?33:27)+'" r="1.9" fill="#ff3b3b"/>'
+    +(type==='serpent'||type==='dragon'?'':'<circle cx="47" cy="27" r="1.9" fill="#ff3b3b"/></g>')
+    +(type==='serpent'||type==='dragon'?'</g>':'')
+    +'</svg>';
+}
+function svNinja(c,id){
+  var cfg=WEPN[id]||['#93a3b8','kunai'];
+  var col=cfg[0], wp=cfg[1], uid=window.__uid=window.__uid||0;window.__uid++;
+  var g='ng'+window.__uid;
+  var arma='';
+  if(wp==='kunai') arma='<path d="M46,34 l7,-7 l1,6 l-5,4 z" fill="'+col+'"/>';
+  else if(wp==='sword') arma='<path d="M46,32 l12,-14" stroke="'+col+'" stroke-width="2.6" stroke-linecap="round"/><path d="M44,34 l4,4" stroke="#556" stroke-width="2.4"/>';
+  else if(wp==='staff') arma='<path d="M46,20 l0,26" stroke="'+col+'" stroke-width="2.6" stroke-linecap="round"/><circle cx="46" cy="20" r="2.4" fill="'+col+'"/>';
+  else if(wp==='bow') arma='<path d="M50,24 Q56,34 50,44" stroke="'+col+'" stroke-width="2.4" fill="none"/><path d="M50,24 L50,44" stroke="#ccd" stroke-width="1.2"/>';
+  else if(wp==='wall') arma='<path d="M40,26 Q32,34 40,50 L48,50 Q54,36 48,26 Z" fill="'+col+'" opacity=".85" stroke="#233" stroke-width="1.4"/>';
+  else if(wp==='scroll') arma='<rect x="42" y="30" width="10" height="7" rx="2" fill="'+col+'"/><path d="M43,33 l8,0" stroke="#233" stroke-width="1"/>';
+  else if(wp==='bolt') arma='<path d="M48,18 l-6,10 l4,0 l-5,10 l9,-12 l-4,0 z" fill="#ffd44d" stroke="'+col+'"/>';
+  else if(wp==='crown') arma='<path d="M24,8 l3,4 l5,-4 l5,4 l3,-4 l1,7 l-17,0 z" fill="#ffd44d" stroke="'+col+'"/>';
+  return '<svg class="char" viewBox="0 0 64 60"><defs><linearGradient id="'+g+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0" stop-color="#2a3140"/><stop offset="1" stop-color="#10141c"/></linearGradient></defs>'
+    +'<path d="M22,20 Q32,12 42,20 L44,42 L40,56 L24,56 L20,42 Z" fill="url(#'+g+')" stroke="'+col+'" stroke-width="1.6"/>'
+    +'<circle cx="32" cy="16" r="7.5" fill="#1a2029" stroke="'+col+'" stroke-width="1.6"/>'
+    +'<path d="M26,15 L38,15" stroke="'+col+'" stroke-width="2.2"/>'
+    +'<g class="eyes"><rect x="27.4" y="15.6" width="3" height="1.6" fill="#ff3b3b"/><rect x="31.8" y="15.6" width="3" height="1.6" fill="#ff3b3b"/></g>'
+    +'<path d="M24,22 L14,34" stroke="#1a2029" stroke-width="4.4" stroke-linecap="round"/>'
+    +'<path d="M40,22 L46,32" stroke="#1a2029" stroke-width="4.4" stroke-linecap="round"/>'
+    +arma
+    +'</svg>';
+}
+function svTech(c){
+  var col='#b06bff';
+  if(c.id==='t2')col='#8be9ff'; if(c.id==='t4')col='#40c8ff'; if(c.id==='t5')col='#ffd44d';
+  return '<svg class="char" viewBox="0 0 64 60"><g class="breath">'
+    +'<circle cx="32" cy="30" r="17" fill="none" stroke="'+col+'" stroke-width="2" opacity=".5"/>'
+    +'<circle cx="32" cy="30" r="11" fill="none" stroke="'+col+'" stroke-width="2.6"/>'
+    +'<path d="M32,14 Q40,22 32,30 Q24,38 32,46" stroke="'+col+'" stroke-width="3" fill="none" stroke-linecap="round"/>'
+    +'</g></svg>';
+}
+function svChar(c){
+  if(!c.id)return '';
+  if(c.r==='dia')return svBeast(c);
+  if(c.r==='tec')return svTech(c);
+  return svNinja(c,c.id);
+}
 // ================== RENDER ==================
 function iconosPoder(c){
   var s='';
@@ -569,7 +676,7 @@ function tile(o,lado){
     +'<div class="frame" style="border-color:'+haloC+'"></div>'
     +'<div class="halo" style="background:'+haloC+';color:'+haloC+'"></div>'
     +(c.aura?'<div class="aura">'+c.e+'</div>':'')
-    +'<div class="spr">'+c.art+'</div>'
+    +'<div class="spr">'+svChar(c)+'</div>'
     +'<div class="nm">'+c.n+'</div>'
     +'<div class="st"><span class="a">⚔️'+o.a+'</span> <span class="v">❤️'+o.v+'</span></div>'
     +'<div class="badges">'+iconosPoder(c)+'</div></div></div>';
@@ -602,7 +709,7 @@ function render(sel){
     var cls='hcard r'+c.r+(S.tu.chakra<c.c?' no':'')+(sel&&selCarta===i?' sel':'');
     mh+='<div class="'+cls+'" onclick="tocarCarta('+i+')">'
       +'<div class="costo">'+c.c+'</div>'
-      +'<div class="art">'+c.art+'</div>'
+      +'<div class="art">'+svChar(c)+'</div>'
       +'<div class="nmm">'+c.n+'</div>'
       +(c.r==='tec'?'<div class="picons">'+c.art+c.e+'</div>':'<div class="gema"><span class="a">⚔️'+c.a+'</span><span class="v">❤️'+c.v+'</span></div>')
       +'<div class="picons">'+iconosPoder(c)+'</div>'
@@ -618,7 +725,7 @@ function render(sel){
 function verCartas(){
   var g={dia:'',oro:'',plata:'',tec:''};
   NOMBRES.forEach(function(id){var c=CARTAS[id];
-    g[c.r]+='<div class="hcard r'+c.r+'"><div class="costo">'+c.c+'</div><div class="art">'+c.art+'</div><div class="nmm">'+c.n+'</div>'
+    g[c.r]+='<div class="hcard r'+c.r+'"><div class="costo">'+c.c+'</div><div class="art">'+svChar(c)+'</div><div class="nmm">'+c.n+'</div>'
       +(c.r==='tec'?'':'<div class="gema"><span class="a">⚔️'+c.a+'</span><span class="v">❤️'+c.v+'</span></div>')
       +'<div class="picons">'+iconosPoder(c)+'</div><div class="small" style="font-size:9px;padding:4px 5px;line-height:1.4">'+c.h+'</div></div>';
   });
