@@ -35,7 +35,8 @@ body{background:radial-gradient(1200px 500px at 50% -10%, #1a2233 0%, var(--bg) 
 @keyframes hit{0%{background:rgba(255,60,60,.55)}100%{background:transparent}}
 .slot.iamy{background:rgba(64,200,255,.05)}
 .u{width:100%;text-align:center;position:relative}
-.u .spr{font-size:30px;display:inline-block;animation:floaty 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+.u .halo{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;filter:blur(7px);opacity:.55;z-index:-1}
+.u .spr{font-size:40px;display:inline-block;animation:floaty 2.6s ease-in-out infinite;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6)) drop-shadow(0 0 7px currentColor)}
 .u .spr.atk{animation:lunge .45s ease}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @keyframes lunge{0%{transform:translateY(0) scale(1)}45%{transform:translateY(-16px) scale(1.28)}100%{transform:translateY(0) scale(1)}}
@@ -136,7 +137,9 @@ var CARTAS = {
   n6:{n:'Jonin Sellador',r:'plata',c:4,a:3,v:5,t:'Ninja',art:'🥷',e:'📜',h:'al entrar: anula habilidad de una bestia rival',sella:1},
   t1:{n:'Sello Rápido',r:'tec',c:2,a:0,v:0,t:'Técnica',art:'📜',e:'📜',h:'devuelve una carta rival a su mano',efecto:'devolver'},
   t2:{n:'Tormenta de Kunai',r:'tec',c:3,a:0,v:0,t:'Técnica',art:'🗡️',e:'💨',h:'2 de daño a un carril rival completo',efecto:'kunai'},
-  t3:{n:'Invocación Ancestral',r:'tec',c:6,a:0,v:0,t:'Técnica',art:'🌀',e:'🌀',h:'convoca gratis una bestia de 1-3 colas de tu mazo',efecto:'invocar'}
+  t3:{n:'Invocación Ancestral',r:'tec',c:6,a:0,v:0,t:'Técnica',art:'🌀',e:'🌀',h:'convoca gratis una bestia de 1-3 colas de tu mazo',efecto:'invocar'},
+  t4:{n:'Vórtice Espiral',r:'tec',c:4,a:0,v:0,t:'Técnica Secreta',art:'🌀',e:'🌀',h:'espiral de chakra: 4 de daño directo a la vida rival',efecto:'vortice'},
+  t5:{n:'Colmillo del Trueno',r:'tec',c:4,a:0,v:0,t:'Técnica Secreta',art:'⚡',e:'⚡',h:'relámpago perforante: 5 de daño a la carta rival más fuerte',efecto:'trueno'}
 };
 var NOMBRES = Object.keys(CARTAS);
 var LANES = [{n:'VOLCÁN',cls:'lVolcan'},{n:'BOSQUE',cls:'lBosque'},{n:'LAGO',cls:'lLago'},{n:'CIMA',cls:'lCima'}];
@@ -163,6 +166,48 @@ function robar(lado,silencio){
 }
 function log(t){var el=document.getElementById('log');if(!el)return;el.innerHTML+='<div>• '+t+'</div>';el.scrollTop=el.scrollHeight;}
 
+// ================== MOTOR DE SONIDO (sintetizado, sin archivos) ==================
+var AC=null;
+function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(AC&&AC.state==='suspended')AC.resume(); return AC; }
+function tono(f1,f2,dur,tipo,vol,delay){
+  var c=ac(); if(!c)return;
+  var t=c.currentTime+(delay||0);
+  var o=c.createOscillator(), g=c.createGain();
+  o.type=tipo||'sine';
+  o.frequency.setValueAtTime(f1,t);
+  if(f2)o.frequency.exponentialRampToValueAtTime(Math.max(30,f2),t+dur);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol||0.18,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(c.destination);
+  o.start(t); o.stop(t+dur+0.05);
+}
+function ruido(dur,vol,f,delay){
+  var c=ac(); if(!c)return;
+  var t=c.currentTime+(delay||0);
+  var n=Math.floor(c.sampleRate*dur);
+  var buf=c.createBuffer(1,n,c.sampleRate);
+  var d=buf.getChannelData(0);
+  for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*(1-i/n);
+  var src=c.createBufferSource(); src.buffer=buf;
+  var flt=c.createBiquadFilter(); flt.type='lowpass'; flt.frequency.value=f||1200;
+  var g=c.createGain(); g.gain.setValueAtTime(vol||0.2,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  src.connect(flt); flt.connect(g); g.connect(c.destination); src.start(t);
+}
+var SND={
+  convoca:function(){ tono(220,660,.25,'triangle',.15); tono(440,880,.3,'sine',.1,.08); },
+  whoosh:function(){ ruido(.22,.16,900); },
+  impacto:function(){ tono(150,40,.22,'sine',.3); ruido(.12,.12,500,.02); },
+  cruz:function(){ tono(600,200,.18,'sawtooth',.08); ruido(.15,.1,1500,.03); },
+  zap:function(){ tono(1800,120,.25,'square',.12); tono(900,80,.2,'sawtooth',.08,.05); },
+  espiral:function(){ for(var i=0;i<5;i++){ tono(200+i*80,400+i*80,.18,'sawtooth',.06,i*.06); } tono(520,1040,.5,'triangle',.12,.3); },
+  escudo:function(){ tono(520,780,.25,'sine',.12); tono(780,520,.2,'sine',.08,.1); },
+  muerte:function(){ tono(300,60,.4,'sawtooth',.14); },
+  directo:function(){ tono(100,40,.3,'sine',.3); tono(220,110,.15,'square',.1,.05); },
+  victoria:function(){ tono(523,0,.2,'triangle',.16); tono(659,0,.2,'triangle',.16,.18); tono(784,0,.35,'triangle',.18,.36); },
+  derrota:function(){ tono(400,200,.3,'triangle',.15); tono(300,150,.4,'triangle',.13,.25); tono(200,100,.5,'triangle',.12,.5); }
+};
+
 // ================== EFECTOS VISUALES ==================
 function laneRect(lado,i,tipo){
   var idx=(lado==='ia')?i:i; // slots: ia bestia/def arriba, tu abajo
@@ -188,6 +233,7 @@ function proyectil(desde,hasta,emoji){
 function impacto(lado,i,tipo){
   var p=laneRect(lado,i,tipo);
   if(!p)return;
+  SND && SND.impacto && SND.impacto();
   var r=document.createElement('div'); r.className='ring';
   r.style.left=(p.x-27)+'px'; r.style.top=(p.y-27)+'px';
   document.body.appendChild(r);
@@ -204,6 +250,7 @@ function animAtk(lado,i){
   var slot=row.querySelectorAll('.slot')[0];
   var spr=slot?slot.querySelector('.spr'):null;
   if(spr){spr.classList.remove('atk');void spr.offsetWidth;spr.classList.add('atk');}
+  SND.whoosh();
 }
 
 // ================== JUGAR ==================
@@ -224,12 +271,12 @@ function tocarCarril(i){
     if(cr.bestia){showOk('Ese territorio ya tiene tu bestia','⚠️');return;}
     cr.bestia={id:id,a:c.a,v:c.v,maxv:c.v,crece:c.crece||0,cruz:c.cruz||0,peri:c.peri?JSON.parse(JSON.stringify(c.peri)):null,directo:0};
     log('Convocas 💎 <b>'+c.n+'</b> en '+LANES[i].n+'.');
-    impacto('tu',i,'bestia');
+    SND.convoca(); impacto('tu',i,'bestia');
   } else {
     if(cr.def){showOk('Ese territorio ya tiene defensor','⚠️');return;}
     cr.def={id:id,a:c.a,v:c.v,maxv:c.v,aura:c.aura||null,directo:c.directo||0,taunt:c.taunt||0,ady:c.ady||0};
     log('Juegas '+(c.r==='oro'?'🏅':'⚪')+' <b>'+c.n+'</b> en '+LANES[i].n+'.');
-    impacto('tu',i,'def');
+    SND.convoca(); impacto('tu',i,'def');
   }
   L.chakra-=c.c; L.mano.splice(selCarta,1); selCarta=null;
   if(c.roba){robar('tu');log('Robas 1 carta 🃏');}
@@ -245,7 +292,7 @@ function entraDano(rival,d){
     if(cr.bestia&&(!best||cr.bestia.v>best.v)){best=cr.bestia;bl=i;tipo='bestia';}
     if(cr.def&&(!best||cr.def.v>best.v)){best=cr.def;bl=i;tipo='def';}
   });
-  if(best){best.v-=d;log('🌑 '+d+' de daño sombra a <b>'+CARTAS[best.id].n+'</b>.');impacto(rival,bl,tipo);revisarMuerte(rival,bl,tipo);}
+  if(best){best.v-=d;SND.zap();log('🌑 '+d+' de daño sombra a <b>'+CARTAS[best.id].n+'</b>.');impacto(rival,bl,tipo);revisarMuerte(rival,bl,tipo);}
 }
 function sellar(rival){
   var best=null,bl=-1;
@@ -268,6 +315,31 @@ function usarTecnica(lado,c,i,id){
     S[rival].mano.push(dev.id);
     proyectil(laneRect(rival,i,tipo),laneRect(lado,i,'def'),'📜');
     log('📜 <b>Sello Rápido</b>: una carta rival regresa a su mano.');
+  } else if(c.efecto==='vortice'){
+    SND.espiral();
+    var espiralDiv=document.createElement('div');
+    espiralDiv.className='proj'; espiralDiv.style.fontSize='44px'; espiralDiv.textContent='🌀';
+    var p=laneRect(lado,i,'def');
+    if(p){espiralDiv.style.left=p.x+'px';espiralDiv.style.top=p.y+'px';document.body.appendChild(espiralDiv);
+      espiralDiv.animate?espiralDiv.animate([{transform:'rotate(0deg) scale(.4)'},{transform:'rotate(720deg) scale(1.8)'}],{duration:600,easing:'ease-out'}):0;
+      setTimeout(function(){espiralDiv.remove();},700);}
+    S[rival].hp-=4;
+    log('🌀 <b>VÓRTICE ESPIRAL</b>: el chakra giratorio golpea directo la vida rival (-4)!');
+  } else if(c.efecto==='trueno'){
+    SND.zap(); SND.impacto();
+    var best=null,bl=-1,tipo='';
+    S[rival].carriles.forEach(function(cr2,j){
+      if(cr2.bestia&&(!best||cr2.bestia.v>best.v)){best=cr2.bestia;bl=j;tipo='bestia';}
+      if(cr2.def&&(!best||cr2.def.v>best.v)){best=cr2.def;bl=j;tipo='def';}
+    });
+    var rayo=document.createElement('div'); rayo.className='proj'; rayo.style.fontSize='46px'; rayo.textContent='⚡';
+    var p=laneRect(rival,bl,tipo)||{x:innerWidth/2,y:200};
+    rayo.style.left=p.x+'px'; rayo.style.top=(p.y-120)+'px';
+    document.body.appendChild(rayo);
+    setTimeout(function(){rayo.style.top=p.y+'px';},30);
+    setTimeout(function(){rayo.remove();},500);
+    if(best){best.v-=5;impacto(rival,bl,tipo);log('⚡ <b>COLMILLO DEL TRUENO</b>: el relámpago perfora a '+CARTAS[best.id].n+' (-5)!');revisarMuerte(rival,bl,tipo);}
+    else{S[rival].hp-=5;log('⚡ <b>COLMILLO DEL TRUENO</b> golpea directo la vida (-5)!');}
   } else if(c.efecto==='invocar'){
     var cr=L.carriles[i];
     if(cr.bestia){showOk('Ese territorio ya tiene bestia','⚠️');return;}
@@ -300,7 +372,7 @@ function activarPerimetro(rival,i){
         revisarMuerte(yo,i,'bestia');}
     }
     if(best.peri.esc){cr.escudo+=best.peri.esc;
-      log('🛡️ <b>PERÍMETRO</b>: '+CARTAS[best.id].n+' levanta escudo de '+best.peri.esc+'.');
+      SND.escudo(); log('🛡️ <b>PERÍMETRO</b>: '+CARTAS[best.id].n+' levanta escudo de '+best.peri.esc+'.');
       impacto(rival,j,'bestia');}
   });
 }
@@ -331,7 +403,8 @@ function ataqueDe(lado){
       [i-1,i+1].forEach(function(j){
         if(j<0||j>3)return;
         var d=cruz===1?Math.floor(atq/2):atq;
-        proyectil(laneRect(lado,i,'bestia'),laneRect(rival,j,CARTAS[b.id]&&S[rival].carriles[j].bestia?'bestia':'def'),CARTAS[b.id].e);
+        SND.cruz();
+        proyectil(laneRect(lado,i,'bestia'),laneRect(rival,j,S[rival].carriles[j].bestia?'bestia':'def'),CARTAS[b.id].e);
         golpear(rival,j,d,b,lado,true);
       });
     }
@@ -350,14 +423,14 @@ function golpear(rival,i,d,b,lado,cruz){
     log((cruz?'↗ ':'⚔️ ')+CARTAS[b.id].art+' <b>'+CARTAS[b.id].n+'</b> hace '+d+' a '+CARTAS[obj.id].n+' ('+LANES[i].n+').');
     revisarMuerte(rival,i,tipo);
   } else {
-    R.hp-=d; log('💔 ¡Golpe directo a la vida! -'+d+' ('+CARTAS[b.id].n+').');
+    R.hp-=d; SND.directo(); log('💔 ¡Golpe directo a la vida! -'+d+' ('+CARTAS[b.id].n+').');
   }
 }
 function revisarMuerte(lado,i,tipo){
   if(lado!=='tu'&&lado!=='ia')return;
   var cr=S[lado].carriles[i];
-  if(tipo==='bestia'&&cr.bestia&&cr.bestia.v<=0){log('💀 <b>'+CARTAS[cr.bestia.id].n+'</b> cae en '+LANES[i].n+'.');cr.bestia=null;}
-  if(tipo==='def'&&cr.def&&cr.def.v<=0){log('💀 <b>'+CARTAS[cr.def.id].n+'</b> cae en '+LANES[i].n+'.');cr.def=null;}
+  if(tipo==='bestia'&&cr.bestia&&cr.bestia.v<=0){SND.muerte();log('💀 <b>'+CARTAS[cr.bestia.id].n+'</b> cae en '+LANES[i].n+'.');cr.bestia=null;}
+  if(tipo==='def'&&cr.def&&cr.def.v<=0){SND.muerte();log('💀 <b>'+CARTAS[cr.def.id].n+'</b> cae en '+LANES[i].n+'.');cr.def=null;}
 }
 
 // ================== TURNOS ==================
@@ -428,6 +501,8 @@ function rivalPeligro(i){var R=S.tu.carriles[i];return (R.bestia?R.bestia.v:0)+(
 function usarTecnicaIA(c,i,id){
   if(c.efecto==='kunai'){var cr=S.tu.carriles[i];if(cr.bestia)cr.bestia.v-=2;if(cr.def)cr.def.v-=2;log('La IA lanza 🗡️ <b>Tormenta de Kunai</b> en '+LANES[i].n+'.');revisarMuerte('tu',i,'bestia');revisarMuerte('tu',i,'def');}
   else if(c.efecto==='devolver'){var cr=S.tu.carriles[i];if(cr.bestia){S.tu.mano.push(cr.bestia.id);log('La IA devuelve una de tus cartas a tu mano.');cr.bestia=null;}else if(cr.def){S.tu.mano.push(cr.def.id);cr.def=null;}}
+  else if(c.efecto==='vortice'){SND.espiral();S.tu.hp-=4;log('La IA lanza 🌀 <b>VÓRTICE ESPIRAL</b> (-4 directo)!');}
+  else if(c.efecto==='trueno'){SND.zap();var best=null,bl=-1,tipo='';S.tu.carriles.forEach(function(cr2,j){if(cr2.bestia&&(!best||cr2.bestia.v>best.v)){best=cr2.bestia;bl=j;tipo='bestia';}if(cr2.def&&(!best||cr2.def.v>best.v)){best=cr2.def;bl=j;tipo='def';}});if(best){best.v-=5;impacto('tu',bl,tipo);log('La IA lanza ⚡ <b>COLMILLO DEL TRUENO</b>!');revisarMuerte('tu',bl,tipo);}else{S.tu.hp-=5;}}
   else if(c.efecto==='invocar'){var cr=S.ia.carriles[i];if(!cr.bestia){var pool=NOMBRES.filter(function(x){return CARTAS[x].r==='dia'&&CARTAS[x].c<=4;});var cid=pool[Math.floor(Math.random()*pool.length)];var cc=CARTAS[cid];cr.bestia={id:cid,a:cc.a,v:cc.v,maxv:cc.v,cruz:cc.cruz||0,peri:cc.peri?JSON.parse(JSON.stringify(cc.peri)):null,crece:0};log('La IA invoca 🌀 '+cc.n+'.');}}
   S.ia.chakra-=c.c;var k=S.ia.mano.indexOf(id);if(k>=0)S.ia.mano.splice(k,1);
 }
@@ -438,6 +513,7 @@ function checkFin(){
   return false;
 }
 function finJuego(gano){
+  if(gano)SND.victoria(); else SND.derrota();
   document.getElementById('modal').innerHTML='<div class="modal"><div class="mbox"><div class="big">'+(gano?'🏆':'🐉')+'</div>'
    +'<h2 style="font-size:22px">'+(gano?'¡VICTORIA!':'Derrota')+'</h2>'
    +'<div class="small" style="margin:10px 0">'+(gano?'Venciste a la IA del dragón. En la fase 2 podrás apostar WLD contra personas reales.':'El dragón ganó esta vez. ¡Revancha!')+'</div>'
@@ -467,7 +543,9 @@ function iconosPoder(c){
 function tile(o,lado){
   if(!o)return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><span style="opacity:.25;font-size:18px">➕</span></div>';
   var c=CARTAS[o.id];
+  var haloC=c.r==='dia'?'#4fd1f5':(c.r==='oro'?'#f0b90b':'#93a3b8');
   return '<div class="slot'+(lado==='tu'?' iamy':'')+'"><div class="u">'
+    +'<div class="halo" style="background:'+haloC+';color:'+haloC+'"></div>'
     +(c.aura?'<div class="aura">'+c.e+'</div>':'')
     +'<div class="spr">'+c.art+'</div>'
     +'<div class="nm">'+c.n+'</div>'
