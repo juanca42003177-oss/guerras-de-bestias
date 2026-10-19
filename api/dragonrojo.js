@@ -23,7 +23,7 @@ let branchReady = false;
 async function ensureBranch() {
   if (branchReady) return;
   const chkMe = await fetch('https://api.github.com/user', { headers: H() });
-  if (!chkMe.ok) throw new Error('GITHUB_TOKEN invalido o ausente (HTTP ' + chkMe.status + ')');
+  if (!chkMe.ok) throw new Error('GITHUB_TOKEN invalido (HTTP ' + chkMe.status + ', variable presente: ' + (TOK ? 'si, longitud ' + TOK.length : 'NO — no esta definida en Vercel') + ')');
   const chk = await fetch(`https://api.github.com/repos/${REPO}/git/ref/heads/${BRANCH}`, { headers: H() });
   if (chk.ok) { branchReady = true; return; }
   const rb = await fetch(`https://api.github.com/repos/${REPO}`, { headers: H() });
