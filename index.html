@@ -48,6 +48,14 @@ h1{font-size:26px;text-align:center;margin:12px 0 2px;background:linear-gradient
 .tab.on{border-color:var(--oro);color:var(--oro2);background:linear-gradient(180deg,#2c210a,#191305)}
 .small{font-size:11px;color:var(--mut);line-height:1.5}
 .foot{text-align:center;font-size:10px;color:#565b6e;margin-top:16px;letter-spacing:1px}
+.hucha-row{display:flex;gap:8px;margin-top:8px}
+.hucha-row>div{flex:1;background:var(--card2);border:1px solid var(--borde);border-radius:12px;padding:8px 4px;text-align:center}
+.hn{font-size:15px;font-weight:800;color:var(--oro)}
+.ht{font-size:8.5px;color:var(--mut);letter-spacing:.5px;margin-top:2px}
+.swrow{display:flex;gap:6px;align-items:center}
+.swrow select,.swrow input{flex:1;background:var(--card2);border:1px solid var(--borde);color:var(--txt);border-radius:10px;padding:10px;font-weight:800;font-size:14px}
+.mini{background:var(--card2);border:1px solid var(--oro);color:var(--oro2);border-radius:8px;padding:2px 8px;font-weight:800;font-size:10px;cursor:pointer}
+.btn-sec{display:block;width:100%;border:1px solid var(--oro);background:var(--card2);color:var(--oro2);border-radius:12px;padding:12px;font-weight:900;font-size:14px;cursor:pointer;margin-top:8px}
 </style>
 </head>
 <body>
@@ -71,9 +79,29 @@ h1{font-size:26px;text-align:center;margin:12px 0 2px;background:linear-gradient
 <button class="btn btn-rey" id="btnJugar" onclick="jugar()">🔥 DESAFIAR AL DRAGÓN</button>
 <div class="small" style="margin-top:8px">Ganas el doble de tu apuesta o la pierdes. 50/50. Mínimo 1 · máximo 10.</div>
 </div>
+<div class="box">
+<b style="font-size:13px">🔥 HUCHA DEL DRAGÓN</b>
+<div id="huchaInfo"><span class="small">Conectá tu wallet para ver tu hucha. Cada cambio que hacés acá genera comisión, y el Dragón te devuelve una parte: <b>10% base + 0.5% por día de racha, hasta 15%</b>. Es tu dinero, generado por vos.</span></div>
+<input id="drHandleInput" placeholder="Tu @ de Telegram (opcional, para avisos)" oninput="DR.guardarHandle(this.value)" style="width:100%;margin-top:8px;background:var(--card2);border:1px solid var(--borde);color:var(--txt);border-radius:10px;padding:10px;font-size:13px">
+<div style="display:flex;gap:6px;margin-top:8px">
+<button class="btn-sec" style="margin-top:0" onclick="DR.reclamarRacha()">📅 RECLAMAR RACHA DE HOY</button>
+<button class="btn-sec" style="margin-top:0" onclick="DR.reclamarHucha()">💰 COBRAR MI HUCHA</button>
+</div>
+<div class="small" style="margin-top:6px">Racha: para reclamar cada día necesitás un cambio real de mínimo $1 ese día. Cada día de racha sube tu % de devolución.</div>
+</div>
+<div class="box">
+<b style="font-size:13px">⇆ CAMBIAR SIN SALIR (0.3%)</b>
+<div class="swrow" style="margin-top:8px"><select id="drFrom"></select><button class="mini" style="padding:8px" onclick="var f=drFrom.value;drFrom.value=drTo.value;drTo.value=f;DR.cotizar()">⇄</button><select id="drTo"></select></div>
+<div class="swrow" style="margin-top:6px"><input id="drAmt" type="number" placeholder="Cantidad" inputmode="decimal"><button class="btn-sec" style="margin-top:0;flex:0 0 90px" onclick="DR.conectar()">🔌 WALLET</button></div>
+<div id="drBal" class="small" style="margin-top:4px"></div>
+<div id="drQuote" style="margin-top:6px;font-size:13px"><span class="small">Elegí tokens y monto</span></div>
+<button class="btn btn-oro" onclick="DR.hacerSwap()">🔥 CAMBIAR AHORA</button>
+<div class="small" style="margin-top:4px">Precios en vivo, liquidez verificada, slippage protegido. Comisión 0.3% (1% en tokens difíciles) — parte vuelve a tu hucha.</div>
+</div>
 <div class="box"><b style="font-size:13px">📜 Historial</b><div class="histrow" id="hist"></div></div>
 <div class="foot">DRAGON TRADE LABS · DRAGÓN ROJO</div>
 </div>
+<script src="drjSwap.js?v=20261019"></script>
 <script>
 var M={modo:'libre',apuesta:1,saldo:null,hist:[],jugando:false};
 try{M.saldo=parseInt(localStorage.getItem('drSaldo'));if(isNaN(M.saldo))M.saldo=10;
