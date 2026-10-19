@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>🐉 Dragón Rojo — Dragon Trade Labs</title>
-<link rel="icon" href="logos/app-logo.png">
+<title>🐉 Dragón Rojo — Doble o Nada</title>
+<link rel="icon" href="logos/logo-dragon-rojo-cine-512.webp">
 <style>
 :root{--oro:#f0b90b;--oro2:#ffe08a;--rojo:#e63946;--rojo2:#7a1010;--bg:#0a0a0f;--card:#15161d;--card2:#1e1f2b;--borde:#2a2c3a;--txt:#f2f4f8;--mut:#8b91a5}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -12,18 +12,16 @@ body{background:radial-gradient(120% 90% at 50% 0%,#1a0d10 0%,var(--bg) 55%),var
 .wrap{max-width:430px;margin:0 auto;padding:14px 12px 90px}
 .box{background:var(--card);border:1px solid var(--borde);border-radius:16px;padding:14px;margin:10px 0}
 .brandrow{display:flex;align-items:center;gap:10px;justify-content:center;margin:8px 0 2px}
-.brandrow img{width:40px;height:40px;border-radius:10px;box-shadow:0 0 14px rgba(240,185,11,.45)}
+.brandrow img{width:92px;height:92px;border-radius:24px;box-shadow:0 0 26px rgba(230,57,70,.55),0 0 60px rgba(240,185,11,.25);border:1px solid #3a1013}
 .brandtxt{text-align:left;line-height:1.15}
 .brandtxt b{font-size:14px;letter-spacing:1px;color:var(--oro)}
 .brandtxt span{display:block;font-size:10px;color:var(--mut);letter-spacing:2.5px}
 h1{font-size:26px;text-align:center;margin:12px 0 2px;background:linear-gradient(90deg,#ff6b6b,#ffd44d 50%,#ff6b6b);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:1px}
 .sub{text-align:center;color:var(--mut);font-size:12px;margin-bottom:10px}
 .arena{text-align:center;position:relative}
-.drg{width:230px;height:230px;margin:0 auto;display:block;filter:drop-shadow(0 10px 30px rgba(230,57,70,.35))}
-.eyes-glow .ojo{filter:url(#gl);opacity:1}
-.ojo{opacity:.35;transition:opacity .3s}
-.iris{animation:iris 1.6s ease-in-out infinite}
-@keyframes iris{50%{opacity:.6}}
+.drg{width:250px;height:250px;max-width:82%;object-fit:cover;border-radius:28px;margin:0 auto;display:block;filter:drop-shadow(0 12px 34px rgba(230,57,70,.45))}
+.drg{transition:filter .35s}
+.drg.despierto{filter:drop-shadow(0 0 28px rgba(255,180,40,.8)) brightness(1.25) saturate(1.15)}
 #fuego{position:absolute;left:50%;top:58%;width:120px;height:150px;transform:translateX(-50%);pointer-events:none;opacity:0}
 #fuego.on{opacity:1;animation:fue .7s ease-out}
 @keyframes fue{0%{transform:translateX(-50%) scaleY(0);transform-origin:top}45%{transform:translateX(-50%) scaleY(1)}100%{transform:translateX(-50%) scaleY(0);opacity:0}}
@@ -54,49 +52,12 @@ h1{font-size:26px;text-align:center;margin:12px 0 2px;background:linear-gradient
 </head>
 <body>
 <div class="wrap">
-<div class="brandrow"><img src="logos/app-logo.png" alt="Dragon Trade Labs"><div class="brandtxt"><b>DRAGON TRADE LABS</b><span>PRESENTA</span></div></div>
+<div class="brandrow"><img src="logos/logo-dragon-rojo-cine-512.webp" alt="Dragón Rojo"></div>
 <h1>🐉 DRAGÓN ROJO</h1>
 <div class="sub">Doble o nada — desafía al dragón</div>
 <div class="box arena">
 <div class="drg-wrap" id="drap">
-<svg class="dr" id="drgsvg" viewBox="0 0 220 250" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient id="cuero" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="#ff6a52"/><stop offset=".35" stop-color="#d81f26"/><stop offset=".75" stop-color="#7a0e12"/><stop offset="1" stop-color="#3d0407"/></linearGradient>
-<linearGradient id="cuero2" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#c1161d"/><stop offset="1" stop-color="#2e0206"/></linearGradient>
-<linearGradient id="cuerno" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#08080c"/><stop offset=".5" stop-color="#2c2c36"/><stop offset=".75" stop-color="#101018"/><stop offset="1" stop-color="#000"/></linearGradient>
-<radialGradient id="iris" cx=".5" cy=".5" r=".6"><stop offset="0" stop-color="#d9a6ff"/><stop offset=".45" stop-color="#9b30d9"/><stop offset="1" stop-color="#3d0a63"/></radialGradient>
-<radialGradient id="humo" cx=".5" cy=".55" r=".65"><stop offset="0" stop-color="#3a3a44"/><stop offset=".6" stop-color="#1a1a20"/><stop offset="1" stop-color="#050508"/></radialGradient>
-<pattern id="esc" width="14" height="11" patternUnits="userSpaceOnUse"><path d="M0,11 Q3.5,3 7,11 Q10.5,3 14,11 L14,14 L0,14 Z" fill="#000" opacity=".22"/><path d="M0,11 Q3.5,3 7,11 Q10.5,3 14,11" fill="none" stroke="#ffb09e" stroke-width=".7" opacity=".16"/></pattern>
-<filter id="glp"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-<filter id="fum"><feTurbulence type="fractalNoise" baseFrequency=".012 .03" numOctaves="3" seed="7"/><feDisplacementMap in2="1" xChannelSelector="R" yChannelSelector="G" scale="26"/><feGaussianBlur stdDeviation="2"/></filter>
-<clipPath id="cabeza"><path d="M42,74 L78,44 L110,58 L142,44 L178,74 L170,120 L150,158 L110,190 L70,158 L50,120 Z"/></clipPath>
-</defs>
-<ellipse cx="110" cy="125" rx="108" ry="118" fill="url(#humo)"/>
-<rect x="8" y="10" width="204" height="232" filter="url(#fum)" opacity=".33"/>
-<g id="cabezaG">
-<path d="M42,74 L78,44 L110,58 L142,44 L178,74 L170,120 L150,158 L110,190 L70,158 L50,120 Z" fill="url(#cuero)" stroke="#5e0b0b" stroke-width="1.5"/>
-<rect x="42" y="44" width="140" height="150" fill="url(#esc)" clip-path="url(#cabeza)"/>
-<path d="M42,74 L78,44 L110,58 L142,44 L178,74 L172,88 L110,64 L48,88 Z" fill="#000" opacity=".28" clip-path="url(#cabeza)"/>
-<path d="M50,120 L70,158 L110,190 L150,158 L170,120 L166,146 L146,168 L110,186 L74,168 L54,146 Z" fill="#000" opacity=".3" clip-path="url(#cabeza)"/>
-<path d="M42,74 L78,44 L110,58" fill="none" stroke="#ffd44d" stroke-width="1.6" opacity=".5"/>
-<path d="M110,58 L142,44 L178,74" fill="none" stroke="#ffd44d" stroke-width="1.6" opacity=".5"/>
-<path d="M104,52 C98,34 102,16 110,6 C118,16 122,34 116,52 Z" fill="url(#cuerno)"/>
-<path d="M110,8 C114,18 116,32 113,46" fill="none" stroke="#8a8a96" stroke-width="1" opacity=".5"/>
-<rect x="101" y="48" width="18" height="7" rx="3" fill="#b8860b"/>
-<g class="ojo"><ellipse cx="78" cy="96" rx="19" ry="11" fill="#0d0208"/><path d="M59,96 Q78,84 97,96 Q78,106 59,96" fill="#17041f"/><circle class="iris" cx="78" cy="96" r="8" fill="url(#iris)" filter="url(#glp)"/><circle cx="78" cy="96" r="3" fill="#ffd44d"/></g>
-<g class="ojo"><ellipse cx="142" cy="96" rx="19" ry="11" fill="#0d0208"/><path d="M123,96 Q142,84 161,96 Q142,106 123,96" fill="#17041f"/><circle class="iris" cx="142" cy="96" r="8" fill="url(#iris)" filter="url(#glp)"/><circle cx="142" cy="96" r="3" fill="#ffd44d"/></g>
-<path d="M56,86 L94,80 L92,90 L60,92 Z" fill="#3d0407" opacity=".85"/>
-<path d="M164,86 L126,80 L128,90 L160,92 Z" fill="#3d0407" opacity=".85"/>
-<path d="M84,118 L136,118 L128,166 L92,166 Z" fill="url(#cuero2)"/>
-<rect x="84" y="118" width="52" height="48" fill="url(#esc)" opacity=".5" clip-path="url(#cabeza)"/>
-<ellipse cx="97" cy="130" rx="4.5" ry="3.5" fill="#1a0203"/><ellipse cx="123" cy="130" rx="4.5" ry="3.5" fill="#1a0203"/>
-<path d="M88,164 Q110,176 132,164 L132,170 Q110,184 88,170 Z" fill="#5e0b0b"/>
-<path d="M92,166 l5,10 l5,-10 Z M104,168 l5,10 l5,-10 Z M116,168 l5,10 l5,-10 Z" fill="#f4ead2"/>
-<g class="mandib"><path d="M84,180 L136,180 L132,214 L88,214 Z" fill="url(#cuero2)" stroke="#3d0407" stroke-width="1.2"/><path d="M88,180 l5,12 l5,-12 Z M104,182 l5,12 l5,-12 Z M120,180 l5,12 l5,-12 Z" fill="#f4ead2"/><path d="M92,206 Q110,214 128,206 L126,212 Q110,222 94,212 Z" fill="#5e0b0b"/></g>
-<path d="M70,158 L110,190 L150,158 L154,170 L110,206 L66,170 Z" fill="url(#cuero)" stroke="#5e0b0b" stroke-width="1.2"/>
-<rect x="66" y="158" width="88" height="48" fill="url(#esc)" opacity=".4"/>
-</g>
-</svg>
+<img class="drg" id="drimg" src="logos/logo-dragon-rojo-cine-512.webp" alt="Dragón Rojo">
 
 <div id="fuego"><div class="fuecore"></div></div>
 </div>
@@ -146,9 +107,9 @@ function jugar(){
   if(M.saldo<M.apuesta){document.getElementById('res').textContent='Te quedaste sin monedas 🪙 (recarga cerrando y abriendo)';return;}
   if(M.saldo<=0){document.getElementById('res').textContent='Sin monedas. Práctica terminada.';return;}
   M.jugando=true;var res=document.getElementById('res');res.textContent='';res.className='res';
-  var svg=document.getElementById('drgsvg');var dr=document.getElementById('drap');
+  var dr=document.getElementById('drap');var img=document.getElementById('drimg');
   // 1) el dragon despierta: ojos brillan
-  svg.querySelectorAll('.ojo').forEach(function(o){o.style.opacity='1';});
+  img.classList.add('despierto');
   sndDespertar();res.textContent='👁️ El dragón despierta...';dr.style.animation='none';
   setTimeout(function(){
     // 2) suspiro y rugido con fuego
@@ -164,7 +125,7 @@ function jugar(){
       else{M.saldo-=M.apuesta;histEntry={v:M.apuesta,g:false};sndPierde();
         res.innerHTML='💀 El dragón se quedó con tu apuesta ('+M.apuesta+'🪙)';res.className='res pierde';}
       M.hist.unshift(histEntry);guardar();M.jugando=false;pintar();
-      setTimeout(function(){svg.querySelectorAll('.ojo').forEach(function(o){o.style.opacity='';});},900);
+      setTimeout(function(){img.classList.remove('despierto');},900);
     },750);
   },900);
 }
