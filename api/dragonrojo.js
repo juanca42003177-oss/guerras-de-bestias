@@ -85,17 +85,21 @@ export default async function handler(req, res) {
     let u = data[w] || { feeTotalUsd: 0, cashbackUsd: 0, pendingUsd: 0, streak: 0, lastClaimDay: '', todaySwapUsd: 0, lastSwapDay: '', handle: '' };
     u.handle = b.handle || u.handle || '';
 
-    if (b.action === 'swap') {
+    if (b.action === 'swap' || b.action === 'bet') {
+      const esApuesta = b.action === 'bet';
       const usd = Math.max(0, +b.usd || 0);
       const feeUsd = Math.max(0, +b.feeUsd || 0);
-      if (usd < 1) return cors(res, 400, { ok: false, error: 'monto invalido' });
+      if (usd < 0.01) return cors(res, 400, { ok: false, error: 'monto invalido' });
       const pct = pctDe(u.streak || 0);
       u.feeTotalUsd += feeUsd;
       u.cashbackUsd += feeUsd * pct / 100;
       if (u.lastSwapDay === hoy) u.todaySwapUsd += usd; else { u.todaySwapUsd = usd; u.lastSwapDay = hoy; }
       data[w] = u;
-      await guardar(data, sha, 'dragonrojo swap ' + w.slice(0, 8));
-      await aviso(`🔥 DRAGÓN ROJO — Intercambio\n@${u.handle || 'usuario'} cambió $${usd.toFixed(2)} ${b.from || '?'}→${b.to || '?'}\nComisión: $${feeUsd.toFixed(4)} · vuelve a la hucha $${(feeUsd * pct / 100).toFixed(4)} (${pct}%)\nHucha total: $${u.cashbackUsd.toFixed(4)} · Racha: ${u.streak || 0} días\n${w}`);
+      await guardar(data, sha, 'dragonrojo ' + b.action + ' ' + w.slice(0, 8));
+      const resTxt = esApuesta ? (b.won ? 'GANÓ 🎉 (+$' + (+b.gananciaUsd || usd).toFixed(2) + ')' : 'perdió 💀') : '$' + usd.toFixed(2) + ' ' + (b.from || '?') + '→' + (b.to || '?');
+      await aviso(esApuesta
+        ? `🔥 DRAGÓN ROJO — Apuesta real\n@${u.handle || 'usuario'} apostó ${(+b.wld || 0).toFixed(2)} WLD (≈ $${usd.toFixed(2)}) → ${resTxt}\nComisión 1%: $${feeUsd.toFixed(4)} · a la hucha $${(feeUsd * pct / 100).toFixed(4)} (${pct}%)\nHucha: $${u.cashbackUsd.toFixed(4)} · Racha: ${u.streak || 0}d\n${w}`
+        : `🔥 DRAGÓN ROJO — Intercambio\n@${u.handle || 'usuario'} cambió $${usd.toFixed(2)} ${b.from || '?'}→${b.to || '?'}\nComisión: $${feeUsd.toFixed(4)} · vuelve a la hucha $${(feeUsd * pct / 100).toFixed(4)} (${pct}%)\nHucha total: $${u.cashbackUsd.toFixed(4)} · Racha: ${u.streak || 0} días\n${w}`);
       return cors(res, 200, { ok: true, cashbackUsd: +u.cashbackUsd.toFixed(4), pct, todaySwapUsd: +u.todaySwapUsd.toFixed(2), elegibleRacha: u.todaySwapUsd >= 1 });
     }
 

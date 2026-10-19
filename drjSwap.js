@@ -4,6 +4,8 @@ var DR = (function () {
   var WETH_ADDRESS = '0x4200000000000000000000000000000000000006';
   var FEE_WALLET = '0x019001d46cd3155ef045a41f4c359c040595438c';
   var SWAP_ROUTER_V3 = '0x091AD9e2e6e5eD44c1c66dB50e49A601F9f36cF6';
+  var DRAGONBET = '0xfe6308263450bd6e52d3e8f8ed35561e303fea5e'; // contrato Doble o Nada (owner: Juan)
+  var BET_EVENT = '0xe59df5a46692209fa0734a872dd01491ec61663579f8b472ea2ade92727c7cf3';
   var SWAP_ROUTER_V2 = '0x541aB7c31A119441eF3575F6973277DE0eF460bd';
   var FEE_BPS_NORMAL = 30n, FEE_BPS_HARD = 100n;
   var HARD_FEE_TOKENS = new Set(['DNA', 'AXO', 'PVPB', 'HUB', 'CHAD', 'uDOGE', 'uXRP']);
@@ -238,7 +240,90 @@ var DR = (function () {
     cargarPrecios();
     if (account) cargarSaldos();
   }
+  async function getNonceBet() {
+    var r = await rpc('eth_call', [{ to: DRAGONBET, data: '0xaffed0e0' }, 'latest']);
+    return parseInt(r, 16);
+  }
+  async function potActual() {
+    try {
+      var r = await rpc('eth_call', [{ to: DRAGONBET, data: '0x4ba2363a' }, 'latest']);
+      return parseInt(r, 16) / 1e18;
+    } catch (e) { return 0; }
+  }
+  async function leerResultado(nonceAntes) {
+    // esperar a que el contrato procese la apuesta (nonce sube) y leer el evento Bet
+    for (var i = 0; i < 12; i++) {
+      await new Promise(function (r) { setTimeout(r, 4000); });
+      try {
+        var n = await getNonceBet();
+        if (n <= nonceAntes) continue;
+        var bn = parseInt(await rpc('eth_blockNumber', []), 16);
+        var logs = await rpc('eth_getLogs', [{ fromBlock: '0x' + Math.max(0, bn - 15).toString(16), toBlock: 'latest', address: DRAGONBET, topics: [BET_EVENT, '0x000000000000000000000000' + account.slice(2).toLowerCase()] }]);
+        for (var j = logs.length - 1; j >= 0; j--) {
+          var d = logs[j].data.slice(2);
+          var stake = parseInt(d.slice(64, 128), 16) / 1e18;
+          var won = parseInt(d.slice(128, 192), 16) === 1;
+          var payout = parseInt(d.slice(192, 256), 16) / 1e18;
+          var betN = parseInt(d.slice(256, 320), 16);
+          if (betN > nonceAntes) return { won: won, stake: stake, payout: payout };
+        }
+      } catch (e) { }
+    }
+    return null;
+  }
+  async function apostarReal(wld) {
+    if (!account && !(await conectar())) return;
+    var precio = prices.WLD || 0.38;
+    var usd = wld * precio;
+    if (usd > 10.5) { drStatus('Tope $10 por apuesta (≈ ' + Math.floor(10 / precio) + ' WLD)', '❌'); return; }
+    var pot = await potActual();
+    if (pot < wld * 2) { drStatus('El dragón está llenando su tesoro. Probá en un rato.', '❌'); return; }
+    var nonceAntes = await getNonceBet();
+    var stakeRaw = (BigInt(Math.round(wld * 1e6)) * 1000000000000n).toString(); // wld con 18 dec
+    var txs = [
+      { to: resolveAddr('WLD'), data: encApprove(DRAGONBET, stakeRaw), value: '0x0' },
+      { to: DRAGONBET, data: '0x7365870b' + BigInt(stakeRaw).toString(16).padStart(64, '0'), value: '0x0' }
+    ];
+    // animacion del dragon mientras el usuario confirma y se procesa
+    if (typeof sndDespertar === 'function') sndDespertar();
+    if (typeof res !== 'undefined') { res.textContent = '👁️ El dragón despierta...'; res.className = 'res'; }
+    if (typeof drap !== 'undefined' && document.getElementById('drimg')) document.getElementById('drimg').classList.add('despierto');
+    try {
+      var usarMiniKit = (typeof MiniKit !== 'undefined' && MiniKit && MiniKit.sendTransaction);
+      if (usarMiniKit) {
+        var r1 = await MiniKit.sendTransaction({ chainId: 480, transactions: txs });
+        if (!(r1 && r1.data && r1.data.userOpHash)) { drStatus('Apuesta cancelada', '❌'); return; }
+      } else {
+        for (var i = 0; i < txs.length; i++) await rpc('eth_sendTransaction', [{ from: account, to: txs[i].to, data: txs[i].data, value: '0x0' }]);
+      }
+      if (typeof sndRugido === 'function') sndRugido();
+      var fg = document.getElementById('fuego'); if (fg) { fg.classList.remove('on'); void fg.offsetWidth; fg.classList.add('on'); }
+      if (typeof res !== 'undefined') res.textContent = '🔥 ¡SOPLO DE FUEGO!';
+      if (typeof drap !== 'undefined') drap.style.animation = 'temblor .12s infinite';
+      var resultado = await leerResultado(nonceAntes);
+      if (typeof drap !== 'undefined') drap.style.animation = '';
+      if (!resultado) { drStatus('Tu apuesta se está procesando. Revisá en un momento.', '⏳'); return; }
+      var feeUsd = usd / 100;
+      if (resultado.won) {
+        if (typeof sndGana === 'function') sndGana();
+        if (typeof res !== 'undefined') { res.innerHTML = '🔥 ¡DOBLE! <span class="gana">+' + resultado.payout.toFixed(2) + ' WLD</span>'; res.className = 'res gana'; }
+      } else {
+        if (typeof sndPierde === 'function') sndPierde();
+        if (typeof res !== 'undefined') { res.innerHTML = '💀 El dragón se quedó tu apuesta (' + wld + ' WLD)'; res.className = 'res pierde'; }
+      }
+      setTimeout(function () { if (document.getElementById('drimg')) document.getElementById('drimg').classList.remove('despierto'); }, 900);
+      try {
+        await fetch(drApi('dragonrojo'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'bet', wallet: account, handle: drHandle(), usd: usd, feeUsd: feeUsd, wld: wld, won: resultado.won }) });
+      } catch (e) { }
+      cargarHucha(); cargarSaldos();
+    } catch (e) {
+      if (typeof drap !== 'undefined') drap.style.animation = '';
+      var msg = (e.message || String(e)).toLowerCase();
+      drStatus(msg.includes('revert') ? 'El dragón rechazó la apuesta (tesoro bajo o tope)' : 'Apuesta cancelada', '❌');
+    }
+  }
   return {
+    getAccount: function () { return account; }, precioWld: function () { return prices.WLD || 0.38; }, potActual: potActual, apostarReal: apostarReal,
     init: init, conectar: conectar, cotizar: cotizar, hacerSwap: hacerSwap,
     reclamarRacha: reclamarRacha, reclamarHucha: reclamarHucha, max: max,
     cargarHucha: cargarHucha, guardarHandle: function (h) { try { localStorage.setItem('drHandle', h); } catch (e) { } }
